@@ -5,7 +5,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace MarkMpn.FetchXmlToWebAPI.Tests
 {
-    internal class MetadataProvider : IMetadataProvider
+    internal sealed class MetadataProvider : IMetadataProvider
     {
         private IOrganizationService org;
 

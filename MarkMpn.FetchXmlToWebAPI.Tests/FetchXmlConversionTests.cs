@@ -16,7 +16,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
     [TestClass]
     public class FetchXmlConversionTests
     {
-        protected readonly IOrganizationService _service;
+        private readonly IOrganizationService _service;
         private readonly IXrmFakedContext _context;
 
         private readonly List<OneToManyRelationshipMetadata> _relationships = new() ;
@@ -730,8 +730,8 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
             };
 
             SetSealedProperty(attributes["webresource"].Single(a => a.LogicalName == "iscustomizable"), nameof(ManagedPropertyAttributeMetadata.ValueAttributeTypeCode), AttributeTypeCode.Boolean);
-            SetRelationships(this._entities.ToArray(), this._relationships.ToArray());
-            SetAttributes(this._entities.ToArray(), attributes);
+            FetchXmlConversionTests.SetRelationships(this._entities.ToArray(), this._relationships.ToArray());
+            FetchXmlConversionTests.SetAttributes(this._entities.ToArray(), attributes);
             SetSealedProperty(this._entities.Single(e => e.LogicalName == "incident"), nameof(EntityMetadata.ObjectTypeCode), 112);
 
             foreach (var entity in this._entities)
@@ -742,7 +742,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
             return converter.ConvertFetchXmlToWebAPI(fetch);
         }
 
-        private void SetAttributes(EntityMetadata[] entities, Dictionary<string, AttributeMetadata[]> attributes)
+        private static void SetAttributes(EntityMetadata[] entities, Dictionary<string, AttributeMetadata[]> attributes)
         {
             foreach (var entity in entities)
             {
@@ -751,7 +751,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
             }
         }
 
-        private void SetRelationships(EntityMetadata[] entities, OneToManyRelationshipMetadata[] relationships)
+        private static void SetRelationships(EntityMetadata[] entities, OneToManyRelationshipMetadata[] relationships)
         {
             foreach (var relationship in relationships)
             {

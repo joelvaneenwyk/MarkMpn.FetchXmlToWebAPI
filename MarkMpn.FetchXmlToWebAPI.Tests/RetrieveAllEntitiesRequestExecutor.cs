@@ -8,7 +8,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace MarkMpn.FetchXmlToWebAPI.Tests
 {
-    internal class RetrieveAllEntitiesRequestExecutor : IFakeMessageExecutor
+    internal sealed class RetrieveAllEntitiesRequestExecutor : IFakeMessageExecutor
     {
         private readonly Func<IEnumerable<EntityMetadata>> _getEntities;
 

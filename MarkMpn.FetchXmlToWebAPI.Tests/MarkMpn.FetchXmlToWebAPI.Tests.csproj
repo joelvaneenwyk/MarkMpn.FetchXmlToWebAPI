@@ -28,9 +28,44 @@
     <Platforms>AnyCPU;x86;ARM32;ARM64;x64</Platforms>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <NoWarn>$(NoWarn);1701;1702;8981;SYSLIB0044</NoWarn>
-    <WarningsNotAsErrors>1591</WarningsNotAsErrors>
+    <NoWarn>$(NoWarn);1701;1702;8981;CS1591;YSLIB0044</NoWarn>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors)</WarningsNotAsErrors>
     <DocumentationFile>$(SolutionDir).build\doc\$(Configuration)\$(Platform)\$(MSBuildProjectName).xml</DocumentationFile>
+    <OutputType>Library</OutputType>
+    <PlatformTarget>x64</PlatformTarget>
+    <BaseOutputPath>$(SolutionDir).build\obj\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</BaseOutputPath>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|AnyCPU'">
+    <WarningLevel>7</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|x86'">
+    <WarningLevel>7</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|ARM32'">
+    <WarningLevel>7</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|ARM64'">
+    <WarningLevel>7</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|x64'">
+    <WarningLevel>7</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|AnyCPU'">
+    <WarningLevel>7</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|x86'">
+    <WarningLevel>7</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|ARM32'">
+    <WarningLevel>7</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|ARM64'">
+    <WarningLevel>7</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|x64'">
+    <WarningLevel>7</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
   </ItemGroup>
@@ -40,9 +75,9 @@
     <PackageReference Include="FakeXrmEasy.Messages.v365" Version="3.3.3" />
     <PackageReference Include="FakeXrmEasy.Plugins.v365" Version="3.3.3" />
     <PackageReference Include="FakeXrmEasy.v365" Version="3.3.3" />
-    <PackageReference Include="MSTest" Version="3.2.0"/>
-    <PackageReference Include="MSTest.TestAdapter" Version="3.2.0"/>
-    <PackageReference Include="MSTest.TestFramework" Version="3.2.0"/>
+    <PackageReference Include="MSTest" Version="3.2.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.2.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="obj\**" />
