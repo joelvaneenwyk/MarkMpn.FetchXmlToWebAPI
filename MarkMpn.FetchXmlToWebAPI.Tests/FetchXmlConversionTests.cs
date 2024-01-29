@@ -1,10 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Serialization;
 using FakeXrmEasy;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Enums;
+using FakeXrmEasy.FakeMessageExecutors;
+using FakeXrmEasy.Middleware;
+using FakeXrmEasy.Middleware.Crud;
+using FakeXrmEasy.Middleware.Messages;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 
@@ -13,6 +22,25 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
     [TestClass]
     public class FetchXmlConversionTests
     {
+        protected readonly IOrganizationService _service;
+        protected readonly IXrmFakedContext _context;
+
+        private readonly List<OneToManyRelationshipMetadata> _relationships = new() ;
+        private readonly List<EntityMetadata> _entities = new() ;
+
+        public FetchXmlConversionTests()
+        {
+            _context = MiddlewareBuilder
+                .New()
+                .AddCrud()
+                .AddFakeMessageExecutor<RetrieveAllEntitiesRequest>(
+                    new RetrieveAllEntitiesRequestExecutor(() => this._entities))
+                .UseCrud()
+                .UseMessages()
+                .SetLicense(FakeXrmEasyLicense.RPL_1_5)
+                .Build();
+            _service = _context.GetOrganizationService();
+        }
 
         [TestMethod]
         public void SimpleQuery()
@@ -552,10 +580,8 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
         private string ConvertFetchToOData(string fetch)
         {
-            var context = new XrmFakedContext();
-
             // Add basic metadata
-            var relationships = new[]
+            this._relationships.AddRange(new[]
             {
                 new OneToManyRelationshipMetadata
                 {
@@ -573,9 +599,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
                     ReferencingEntity = "account",
                     ReferencingAttribute = "primarycontactid"
                 }
-            };
+            });
 
-            var entities = new[]
+            this._entities.AddRange(new[]
             {
                 new EntityMetadata
                 {
@@ -607,7 +633,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
                     LogicalName = "incident",
                     EntitySetName = "incidents"
                 }
-            };
+            });
 
             var attributes = new Dictionary<string, AttributeMetadata[]>
             {
@@ -710,15 +736,14 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
             };
 
             SetSealedProperty(attributes["webresource"].Single(a => a.LogicalName == "iscustomizable"), nameof(ManagedPropertyAttributeMetadata.ValueAttributeTypeCode), AttributeTypeCode.Boolean);
-            SetRelationships(entities, relationships);
-            SetAttributes(entities, attributes);
-            SetSealedProperty(entities.Single(e => e.LogicalName == "incident"), nameof(EntityMetadata.ObjectTypeCode), 112);
+            SetRelationships(this._entities.ToArray(), this._relationships.ToArray());
+            SetAttributes(this._entities.ToArray(), attributes);
+            SetSealedProperty(this._entities.Single(e => e.LogicalName == "incident"), nameof(EntityMetadata.ObjectTypeCode), 112);
 
-            foreach (var entity in entities)
-                context.SetEntityMetadata(entity);
+            foreach (var entity in this._entities)
+                this._context.SetEntityMetadata(entity);
 
-            context.AddFakeMessageExecutor<RetrieveAllEntitiesRequest>(new RetrieveAllEntitiesRequestExecutor(entities));
-            var org = context.GetOrganizationService();
+            var org = this._context.GetOrganizationService();
             var converter = new FetchXmlToWebAPIConverter(new MetadataProvider(org), $"https://example.crm.dynamics.com/api/data/v9.0");
             return converter.ConvertFetchXmlToWebAPI(fetch);
         }
@@ -750,10 +775,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
             }
         }
 
-        private void SetSealedProperty(object target, string name, object value)
+        private static void SetSealedProperty(object target, string name, object value)
         {
-            var prop = target.GetType().GetProperty(name);
-            prop.SetValue(target, value, null);
+            target.GetType().GetProperty(name)?.SetValue(target, value, null);
         }
     }
 }
