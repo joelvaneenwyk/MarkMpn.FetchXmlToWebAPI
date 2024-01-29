@@ -18,7 +18,7 @@ namespace MarkMpn.FetchXmlToWebAPI
         {
             protected virtual string Separator => ";";
 
-            public string PropertyName { get; set; }
+            public string? PropertyName { get; set; }
 
             public List<string> Select { get; } = new List<string>();
 
@@ -55,7 +55,7 @@ namespace MarkMpn.FetchXmlToWebAPI
             public override string ToString()
             {
                 if (Conditions.Count == 0 && Filters.Count == 0)
-                    return null;
+                    return string.Empty;
 
                 var items = Conditions.Select(c => c.ToString())
                     .Concat(Filters.Select(f => f.ToString()))
@@ -122,7 +122,7 @@ namespace MarkMpn.FetchXmlToWebAPI
 
         class OrderOData
         {
-            public string PropertyName { get; set; }
+            public string? PropertyName { get; set; }
 
             public bool Descending { get; set; }
 
@@ -167,7 +167,7 @@ namespace MarkMpn.FetchXmlToWebAPI
         /// Converts a FetchXML query to Web API format
         /// </summary>
         /// <param name="fetch">The FetchXML query to convert</param>
-        /// <param name="preferHeader">The value to set the Prefer header to</param>
+        /// <param name="preferHeaders">The value to set the Prefer header to</param>
         /// <returns>The equivalent Web API format query</returns>
         public string ConvertFetchXmlToWebAPI(string fetch, out string[] preferHeaders)
         {
@@ -176,22 +176,28 @@ namespace MarkMpn.FetchXmlToWebAPI
                 throw new InvalidOperationException("Must have an active connection to CRM to compose OData query.");
             }
 
+            preferHeaders = Array.Empty<string>();
+
             using (var reader = new StringReader(fetch))
             {
                 var serializer = new XmlSerializer(typeof(FetchType));
-                var parsed = (FetchType)serializer.Deserialize(reader);
+                if (reader != null)
+                {
+                    var parsed = serializer.Deserialize(reader);
+                    if (parsed is FetchType _fetchType)
+                    {
+                        var converted = ConvertOData(_fetchType);
+                        var url = _orgUrl + converted;
 
-                var converted = ConvertOData(parsed);
+                        if (converted.PageSize != null)
+                            preferHeaders = new[] { $"odata.maxpagesize={converted.PageSize}" };
 
-                var url = _orgUrl + converted;
-
-                if (converted.PageSize != null)
-                    preferHeaders = new[] { $"odata.maxpagesize={converted.PageSize}" };
-                else
-                    preferHeaders = null;
-
-                return url;
+                        return url;
+                    }
+                }
             }
+
+            return string.Empty;
         }
 
         private EntityOData ConvertOData(FetchType fetch)
@@ -472,7 +478,7 @@ namespace MarkMpn.FetchXmlToWebAPI
                     result += "/Value";
                 }
                 
-                string function = null;
+                string? function = null;
                 var functionParameters = 1;
                 var functionParameterType = typeof(string);
                 var value = condition.value;
@@ -951,7 +957,7 @@ namespace MarkMpn.FetchXmlToWebAPI
                 .Replace("[[]", "[");
         }
 
-        private FetchLinkEntityType FindLinkEntity(string entityName, object[] items, string alias, string path, out string navigationProperty, out bool child)
+        private FetchLinkEntityType? FindLinkEntity(string entityName, object[] items, string alias, string path, out string navigationProperty, out bool child)
         {
             child = false;
             navigationProperty = path;
@@ -988,7 +994,7 @@ namespace MarkMpn.FetchXmlToWebAPI
             return attr.LogicalName;
         }
 
-        private static string FormatValue(Type type, string s)
+        private static string? FormatValue(Type type, string s)
         {
             if (type == typeof(string))
                 return "'" + HttpUtility.UrlEncode(s.Replace("'", "''")) + "'";
@@ -1044,7 +1050,7 @@ namespace MarkMpn.FetchXmlToWebAPI
             return entityMeta.EntitySetName ?? entityMeta.LogicalCollectionName;
         }
 
-        private string LinkItemToNavigationProperty(string entityname, FetchLinkEntityType linkitem, out bool child, out FetchLinkEntityType manyToManyNextLink)
+        private string LinkItemToNavigationProperty(string entityname, FetchLinkEntityType linkitem, out bool child, out FetchLinkEntityType? manyToManyNextLink)
         {
             manyToManyNextLink = null;
             var entity = _metadata.GetEntity(entityname);
