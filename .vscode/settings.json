@@ -1,0 +1,21 @@
+{
+    "csharp.debug.logging.threadExit": true,
+    "csharp.debug.stopAtEntry": true,
+    "csharp.debug.symbolOptions.searchMicrosoftSymbolServer": true,
+    "csharp.debug.symbolOptions.searchNuGetOrgSymbolServer": true,
+    "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": true,
+    "csharp.inlayHints.enableInlayHintsForTypes": true,
+    "csharp.suppressBuildAssetsNotification": false,
+    "dotnet.automaticallyCreateSolutionInWorkspace": false,
+    "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
+    "dotnet.backgroundAnalysis.compilerDiagnosticsScope": "fullSolution",
+    "dotnet.defaultSolution": "MarkMpn.FetchXmlToWebAPI.sln",
+    "dotnet.inlayHints.enableInlayHintsForIndexerParameters": true,
+    "dotnet.inlayHints.enableInlayHintsForObjectCreationParameters": true,
+    "dotnet.preferVisualStudioCodeFileSystemWatcher": true,
+    "omnisharp.enableAsyncCompletion": true,
+    "omnisharp.enableLspDriver": true,
+    "omnisharp.enableMsBuildLoadProjectsOnDemand": true,
+    "omnisharp.loggingLevel": "debug",
+    "omnisharp.organizeImportsOnFormat": true
+}
