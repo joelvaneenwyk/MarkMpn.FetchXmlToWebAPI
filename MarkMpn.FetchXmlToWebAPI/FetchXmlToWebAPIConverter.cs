@@ -216,15 +216,14 @@ namespace MarkMpn.FetchXmlToWebAPI
                 throw new NotSupportedException("Skipping to subsequent pages is not supported in Web API. Load the first page and follow the @odata.nextLink URLs to get to subsequent pages");
             }
 
-            var entity = fetch.Items.Where(i => i is FetchEntityType).FirstOrDefault() as FetchEntityType;
-
-            if (entity == null)
+            var entity = fetch.Items
+                .Where(i => i is FetchEntityType)
+                .FirstOrDefault() as FetchEntityType ?? throw new NotSupportedException(
+                    "Fetch must contain entity definition");
+            var odata = new EntityOData
             {
-                throw new NotSupportedException("Fetch must contain entity definition");
-            }
-
-            var odata = new EntityOData();
-            odata.PropertyName = LogicalToCollectionName(entity.name);
+                PropertyName = LogicalToCollectionName(entity.name)
+            };
 
             if (!string.IsNullOrEmpty(fetch.top))
             {
@@ -382,7 +381,7 @@ namespace MarkMpn.FetchXmlToWebAPI
 
             foreach (FetchAttributeType attributeitem in attributeitems)
             {
-                var attrMeta = entityMeta.Attributes.SingleOrDefault(a => a.LogicalName == attributeitem.name);
+                var attrMeta = entityMeta.Attributes.FirstOrDefault(a => a.LogicalName == attributeitem.name);
 
                 if (attrMeta == null)
                     throw new NotSupportedException($"Unknown attribute {entityName}.{attributeitem.name}");
@@ -467,12 +466,10 @@ namespace MarkMpn.FetchXmlToWebAPI
                 }
 
                 var entity = _metadata.GetEntity(entityName);
-                var attrMeta = entity.Attributes.FirstOrDefault(a => a.LogicalName == condition.attribute);
-                if (attrMeta == null)
-                {
-                    throw new NotSupportedException($"No metadata for attribute: {entityName}.{condition.attribute}");
-                }
-
+                var attrMeta = entity.Attributes
+                    .FirstOrDefault(a => a.LogicalName == condition.attribute) 
+                        ?? throw new NotSupportedException(
+                            $"No metadata for attribute: {entityName}.{condition.attribute}");
                 result = navigationProperty + GetPropertyName(attrMeta);
                 
                 if (attrMeta is ManagedPropertyAttributeMetadata)
@@ -1033,7 +1030,7 @@ namespace MarkMpn.FetchXmlToWebAPI
             if (!String.IsNullOrEmpty(orderitem.alias))
                 throw new NotSupportedException($"OData queries do not support ordering on link entities. Please remove the sort on {orderitem.alias}.{orderitem.attribute}");
 
-            var attrMetadata = _metadata.GetEntity(entityName).Attributes.SingleOrDefault(a => a.LogicalName == orderitem.attribute);
+            var attrMetadata = _metadata.GetEntity(entityName).Attributes.FirstOrDefault(a => a.LogicalName == orderitem.attribute);
             if (attrMetadata == null)
                 throw new NotSupportedException($"No metadata for attribute {entityName}.{orderitem.attribute}");
 
