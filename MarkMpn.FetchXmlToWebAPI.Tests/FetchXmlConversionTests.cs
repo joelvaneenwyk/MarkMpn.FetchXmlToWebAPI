@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Xml.Serialization;
-using FakeXrmEasy;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Enums;
-using FakeXrmEasy.FakeMessageExecutors;
 using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;

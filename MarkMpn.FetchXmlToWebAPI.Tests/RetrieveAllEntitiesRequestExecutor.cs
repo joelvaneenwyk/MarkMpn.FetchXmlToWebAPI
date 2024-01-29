@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using FakeXrmEasy;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using Microsoft.Xrm.Sdk;
