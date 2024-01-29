@@ -17,7 +17,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
     public class FetchXmlConversionTests
     {
         protected readonly IOrganizationService _service;
-        protected readonly IXrmFakedContext _context;
+        private readonly IXrmFakedContext _context;
 
         private readonly List<OneToManyRelationshipMetadata> _relationships = new() ;
         private readonly List<EntityMetadata> _entities = new() ;
@@ -39,7 +39,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void SimpleQuery()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -54,7 +54,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void LeftOuterJoinParentLink()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -72,7 +72,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void LeftOuterJoinChildLink()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -90,7 +90,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void SimpleFilter()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -108,7 +108,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void NestedFilter()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -130,7 +130,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void Sort()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -146,7 +146,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void Top()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch top='10'>
                     <entity name='account'>
                         <attribute name='name' />
@@ -161,7 +161,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void AggregateCount()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch aggregate='true'>
                     <entity name='account'>
                         <attribute name='name' groupby='true' alias='name' />
@@ -177,7 +177,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void AggregateMax()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch aggregate='true'>
                     <entity name='account'>
                         <attribute name='name' groupby='true' alias='name' />
@@ -193,7 +193,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void InnerJoinParentLink()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -211,7 +211,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void InnerJoinParentLinkWithFilter()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -232,7 +232,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void InnerJoinParentLinkWithComplexFilter()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -253,7 +253,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void InnerJoinChildLink()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -271,7 +271,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void InnerJoinChildLinkWithFilter()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -292,7 +292,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void InnerJoinChildLinkWithComplexFilter()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -313,7 +313,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void FilterPrefix()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -331,7 +331,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void InnerJoinChildLinkWithPrefixFilter()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -352,7 +352,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void FilterSuffix()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -370,7 +370,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void FilterContains()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -388,7 +388,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void FilterPrefixEscaped()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -407,7 +407,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [ExpectedException(typeof(NotSupportedException))]
         public void FilterComplexWildcard()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -423,7 +423,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void FilterOnEntityName()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='stringmap'>
                         <attribute name='attributevalue' />
@@ -444,7 +444,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void FilterOnOptionSet()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='connection'>
                         <attribute name='connectionid' />
@@ -462,7 +462,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void FilterOnManagedProperty()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='webresource'>
                         <attribute name='name' />
@@ -482,7 +482,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [ExpectedException(typeof(NotSupportedException))]
         public void Skip()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch count='10' page='3'>
                     <entity name='account'>
                         <attribute name='name' />
@@ -496,7 +496,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [ExpectedException(typeof(NotSupportedException))]
         public void Archive()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch datasource='archive'>
                     <entity name='account'>
                         <attribute name='name' />
@@ -509,7 +509,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void FilterOnPrimaryKey()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -527,7 +527,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void InnerJoinChildLinkWithNoChildren()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -544,7 +544,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void FilterWithNoChildren()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                         <attribute name='name' />
@@ -561,7 +561,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public void EntityWithNoChildren()
         {
-            var fetch = @"
+            const string fetch = @"
                 <fetch>
                     <entity name='account'>
                     </entity>
