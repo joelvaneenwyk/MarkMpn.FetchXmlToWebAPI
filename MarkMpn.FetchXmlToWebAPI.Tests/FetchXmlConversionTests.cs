@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
+using System.Runtime.InteropServices;
 
 namespace MarkMpn.FetchXmlToWebAPI.Tests
 {
@@ -19,19 +20,27 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         private readonly IOrganizationService _service;
         private readonly IXrmFakedContext _context;
 
-        private readonly List<OneToManyRelationshipMetadata> _relationships = new() ;
-        private readonly List<EntityMetadata> _entities = new() ;
+        private readonly List<OneToManyRelationshipMetadata> _relationships = new();
+        private readonly List<EntityMetadata> _entities = new();
+
+        private Span<EntityMetadata> Entities => CollectionsMarshal.AsSpan(this._entities);
+
+        public IOrganizationService Service => _service;
 
         public FetchXmlConversionTests()
         {
             _context = MiddlewareBuilder
                 .New()
+
                 .AddCrud()
+                .AddFakeMessageExecutors()
                 .AddFakeMessageExecutor<RetrieveAllEntitiesRequest>(
                     new RetrieveAllEntitiesRequestExecutor(() => this._entities))
+
                 .UseCrud()
                 .UseMessages()
-                .SetLicense(FakeXrmEasyLicense.RPL_1_5)
+
+                .SetLicense(FakeXrmEasyLicense.Commercial)
                 .Build();
             _service = _context.GetOrganizationService();
         }
@@ -404,7 +413,6 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))]
         public void FilterComplexWildcard()
         {
             const string fetch = @"
@@ -417,7 +425,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
                     </entity>
                 </fetch>";
 
-            ConvertFetchToOData(fetch);
+            Assert.ThrowsException<NotSupportedException>(() => ConvertFetchToOData(fetch));
         }
 
         [TestMethod]
@@ -479,7 +487,6 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))]
         public void Skip()
         {
             const string fetch = @"
@@ -489,11 +496,10 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
                     </entity>
                 </fetch>";
 
-            ConvertFetchToOData(fetch);
+            Assert.ThrowsException<NotSupportedException>(() => ConvertFetchToOData(fetch));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))]
         public void Archive()
         {
             const string fetch = @"
@@ -503,7 +509,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
                     </entity>
                 </fetch>";
 
-            ConvertFetchToOData(fetch);
+            Assert.ThrowsException<NotSupportedException>(() => ConvertFetchToOData(fetch));
         }
 
         [TestMethod]
@@ -729,12 +735,16 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
                 }
             };
 
-            SetSealedProperty(attributes["webresource"].Single(a => a.LogicalName == "iscustomizable"), nameof(ManagedPropertyAttributeMetadata.ValueAttributeTypeCode), AttributeTypeCode.Boolean);
+            SetSealedProperty(
+                attributes["webresource"].First(a => a.LogicalName == "iscustomizable"),
+                nameof(ManagedPropertyAttributeMetadata.ValueAttributeTypeCode), AttributeTypeCode.Boolean);
             FetchXmlConversionTests.SetRelationships(this._entities.ToArray(), this._relationships.ToArray());
             FetchXmlConversionTests.SetAttributes(this._entities.ToArray(), attributes);
-            SetSealedProperty(this._entities.Single(e => e.LogicalName == "incident"), nameof(EntityMetadata.ObjectTypeCode), 112);
+            SetSealedProperty(
+                this._entities.First(e => e.LogicalName == "incident"),
+                nameof(EntityMetadata.ObjectTypeCode), 112);
 
-            foreach (var entity in this._entities)
+            foreach (ref var entity in this.Entities)
                 this._context.SetEntityMetadata(entity);
 
             var org = this._context.GetOrganizationService();
@@ -746,7 +756,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         {
             foreach (var entity in entities)
             {
-                SetSealedProperty(entity, nameof(EntityMetadata.PrimaryIdAttribute), attributes[entity.LogicalName].OfType<UniqueIdentifierAttributeMetadata>().Single().LogicalName);
+                SetSealedProperty(entity, nameof(EntityMetadata.PrimaryIdAttribute), attributes[entity.LogicalName].OfType<UniqueIdentifierAttributeMetadata>().First().LogicalName);
                 SetSealedProperty(entity, nameof(EntityMetadata.Attributes), attributes[entity.LogicalName]);
             }
         }

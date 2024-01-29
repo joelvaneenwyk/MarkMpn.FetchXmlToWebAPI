@@ -7,7 +7,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 {
     internal sealed class MetadataProvider : IMetadataProvider
     {
-        private IOrganizationService org;
+        private readonly IOrganizationService org;
 
         public MetadataProvider(IOrganizationService org)
         {
@@ -18,14 +18,23 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
         public EntityMetadata GetEntity(string logicalName)
         {
-            var resp = (RetrieveEntityResponse)org.Execute(new RetrieveEntityRequest { LogicalName = logicalName, EntityFilters = EntityFilters.Entity | EntityFilters.Attributes | EntityFilters.Relationships });
+            var resp = (RetrieveEntityResponse)org.Execute(
+                new RetrieveEntityRequest
+                {
+                    LogicalName = logicalName,
+                    EntityFilters = EntityFilters.Entity | EntityFilters.Attributes | EntityFilters.Relationships
+                });
             return resp.EntityMetadata;
         }
 
         public EntityMetadata GetEntity(int otc)
         {
-            var resp = (RetrieveAllEntitiesResponse)org.Execute(new RetrieveAllEntitiesRequest { EntityFilters = EntityFilters.Entity | EntityFilters.Attributes | EntityFilters.Relationships });
-            return resp.EntityMetadata.Single(e => e.ObjectTypeCode == otc);
+            var resp = (RetrieveAllEntitiesResponse)org.Execute(
+                new RetrieveAllEntitiesRequest
+                {
+                    EntityFilters = EntityFilters.Entity | EntityFilters.Attributes | EntityFilters.Relationships
+                });
+            return resp.EntityMetadata.First(e => e.ObjectTypeCode == otc);
         }
     }
 }
