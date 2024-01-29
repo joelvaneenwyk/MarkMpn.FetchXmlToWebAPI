@@ -26,7 +26,6 @@
     <PackageReference Include="FakeXrmEasy.Core.v9" Version="3.3.3" />
     <PackageReference Include="FakeXrmEasy.Messages.v9" Version="3.3.3" />
     <PackageReference Include="FakeXrmEasy.Plugins.v9" Version="3.3.3" />
-    <PackageReference Include="FakeXrmEasy.v9" Version="3.3.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0-release-23619-01" />
     <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.24" />
     <PackageReference Include="MSTest" Version="3.2.0" />
