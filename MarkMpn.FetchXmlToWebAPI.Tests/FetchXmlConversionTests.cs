@@ -11,6 +11,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using System.Runtime.InteropServices;
+using FakeXrmEasy.Middleware.Pipeline;
 
 namespace MarkMpn.FetchXmlToWebAPI.Tests
 {
@@ -29,19 +30,29 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
         public FetchXmlConversionTests()
         {
-            _context = MiddlewareBuilder
-                .New()
+            _context = XrmFakedContextFactory.New(FakeXrmEasyLicense.RPL_1_5);
 
-                .AddCrud()
-                .AddFakeMessageExecutors()
-                .AddFakeMessageExecutor<RetrieveAllEntitiesRequest>(
-                    new RetrieveAllEntitiesRequestExecutor(() => this._entities))
+            // _context = MiddlewareBuilder
+            //             .New()
+            // 
+            //             // Add* -> Middleware configuration
+            //             .AddCrud()
+            //             .AddFakeMessageExecutors()
+            //             .AddGenericFakeMessageExecutors()
+            // 
+            //             // .AddFakeMessageExecutor<RetrieveAllEntitiesRequest>(
+            //             //     new RetrieveAllEntitiesRequestExecutor(() => this._entities))
+            // 
+            //             .AddPipelineSimulation()
+            // 
+            //             // Use* -> Defines pipeline sequence
+            //             .UsePipelineSimulation()
+            //             .UseCrud()
+            //             .UseMessages()
+            // 
+            //             .SetLicense(FakeXrmEasyLicense.RPL_1_5)
+            //             .Build();
 
-                .UseCrud()
-                .UseMessages()
-
-                .SetLicense(FakeXrmEasyLicense.Commercial)
-                .Build();
             _service = _context.GetOrganizationService();
         }
 
