@@ -18,7 +18,7 @@ namespace MarkMpn.FetchXmlToWebAPI
         {
             protected virtual string Separator => ";";
 
-            public string PropertyName { get; set; }
+            public string PropertyName { get; set; } = "";
 
             public List<string> Select { get; } = new List<string>();
 
@@ -122,7 +122,7 @@ namespace MarkMpn.FetchXmlToWebAPI
 
         sealed class OrderOData
         {
-            public string PropertyName { get; set; }
+            public string PropertyName { get; set; } = "";
 
             public bool Descending { get; set; }
 
@@ -184,7 +184,7 @@ namespace MarkMpn.FetchXmlToWebAPI
                 if (reader != null)
                 {
 #pragma warning disable CA5369 // Use XmlReader for 'XmlSerializer.Deserialize()'
-                    object parsed = serializer.Deserialize(reader);
+                    object parsed = serializer.Deserialize(reader) ?? new object();
 #pragma warning restore CA5369 // Use XmlReader for 'XmlSerializer.Deserialize()'
                     if (parsed is FetchType _fetchType)
                     {
@@ -348,8 +348,10 @@ namespace MarkMpn.FetchXmlToWebAPI
             foreach (var linkEntity in items.OfType<FetchLinkEntityType>().Where(l => l.Items != null && l.Items.Length != 0))
             {
                 var currentLinkEntity = linkEntity;
-                var expand = new LinkEntityOData();
-                expand.PropertyName = LinkItemToNavigationProperty(entityName, currentLinkEntity, out var child, out var manyToManyNextLink);
+                var expand = new LinkEntityOData
+                {
+                    PropertyName = LinkItemToNavigationProperty(entityName, currentLinkEntity, out var child, out var manyToManyNextLink)
+                };
                 currentLinkEntity = manyToManyNextLink ?? currentLinkEntity;
                 expand.Select.AddRange(ConvertSelect(currentLinkEntity.name, currentLinkEntity.Items));
 
@@ -383,10 +385,9 @@ namespace MarkMpn.FetchXmlToWebAPI
             {
                 var attrMeta = entityMeta.Attributes.FirstOrDefault(a => a.LogicalName == attributeitem.name);
 
-                if (attrMeta == null)
-                    throw new NotSupportedException($"Unknown attribute {entityName}.{attributeitem.name}");
-
-                yield return GetPropertyName(attrMeta);
+                yield return attrMeta == null
+                    ? throw new NotSupportedException($"Unknown attribute {entityName}.{attributeitem.name}")
+                    : GetPropertyName(attrMeta);
             }
         }
 
@@ -418,13 +419,10 @@ namespace MarkMpn.FetchXmlToWebAPI
             {
                 if (!String.IsNullOrEmpty(condition.entityname))
                 {
-                    var linkEntity = FindLinkEntity(entityName, rootEntityItems, condition.entityname, "", out navigationProperty, out var child);
-
-                    if (linkEntity == null)
-                    {
-                        throw new NotSupportedException($"Cannot find filter entity " + condition.entityname);
-                    }
-
+                    var linkEntity = 
+                        FindLinkEntity(entityName, rootEntityItems, condition.entityname, "", out navigationProperty, out var child) 
+                        ?? throw new NotSupportedException($"Cannot find filter entity " + condition.entityname);
+                    
                     if (child)
                     {
                         // Filtering a child collection separately has different semantics in OData vs. FetchXML, e.g.:
@@ -477,7 +475,7 @@ namespace MarkMpn.FetchXmlToWebAPI
                     result += "/Value";
                 }
                 
-                string function = null;
+                string function = "";
                 var functionParameters = 1;
                 var functionParameterType = typeof(string);
                 var value = condition.value;
@@ -503,17 +501,20 @@ namespace MarkMpn.FetchXmlToWebAPI
                         break;
                     case @operator.like:
                     case @operator.notlike:
-                        var hasInitialWildcard = value.StartsWith("%");
+                        var hasInitialWildcard = value.StartsWith("%", StringComparison.OrdinalIgnoreCase);
                         if (hasInitialWildcard)
                             value = value.Take(1).ToString();
-                        var hasTerminalWildcard = value?.EndsWith("%") ?? false;
+                        var hasTerminalWildcard = value?.EndsWith("%", StringComparison.OrdinalIgnoreCase) ?? false;
                         if (hasTerminalWildcard)
-                            value = value.Substring(0, value.Length - 1);
+                            value = value?.Substring(0, value.Length - 1);
 
-                        if (!FetchXmlToWebAPIConverter.AreAllLikeWildcardsEscaped(value))
-                            throw new NotSupportedException("OData queries do not support complex LIKE wildcards. Only % at the start or end of the value is supported");
+                        if (!string.IsNullOrEmpty(value))
+                        {
+                            if (!FetchXmlToWebAPIConverter.AreAllLikeWildcardsEscaped(value))
+                                throw new NotSupportedException("OData queries do not support complex LIKE wildcards. Only % at the start or end of the value is supported");
 
-                        value = FetchXmlToWebAPIConverter.UnescapeLikeWildcards(value);
+                            value = FetchXmlToWebAPIConverter.UnescapeLikeWildcards(value);
+                        }
 
                         if (!hasInitialWildcard && !hasTerminalWildcard)
                         {
@@ -530,7 +531,7 @@ namespace MarkMpn.FetchXmlToWebAPI
                             else
                                 func = "startswith";
 
-                            result = $"{func}({HttpUtility.UrlEncode(navigationProperty + attrMeta.LogicalName)}, {FormatValue(typeof(string), value)})";
+                            result = $"{func}({HttpUtility.UrlEncode(navigationProperty + attrMeta.LogicalName)}, {FormatValue(typeof(string), value ?? "")})";
                         }
 
                         if (condition.@operator == @operator.notlike)
@@ -826,7 +827,7 @@ namespace MarkMpn.FetchXmlToWebAPI
                         throw new NotSupportedException($"Unsupported OData condition operator '{condition.@operator}'");
                 }
 
-                if (!String.IsNullOrEmpty(function))
+                if (!string.IsNullOrEmpty(function))
                 {
                     if (functionParameters == Int32.MaxValue)
                         return $"{navigationProperty}Microsoft.Dynamics.CRM.{HttpUtility.UrlEncode(function)}(PropertyName='{HttpUtility.UrlEncode(attrMeta.LogicalName)}',PropertyValues=[{String.Join(",", condition.Items.Select(i => FormatValue(functionParameterType, i.Value)))}])";
@@ -982,7 +983,7 @@ namespace MarkMpn.FetchXmlToWebAPI
                 }
             }
 
-            return null;
+            return new FetchLinkEntityType();
         }
 
         private static string GetPropertyName(AttributeMetadata attr)
@@ -1001,7 +1002,6 @@ namespace MarkMpn.FetchXmlToWebAPI
             if (type == typeof(DateTime))
             {
                 var date = DateTimeOffset.Parse(s, CultureInfo.CurrentCulture);
-                var datestr = string.Empty;
                 if (date.Equals(date.Date))
                     return date.ToString("yyyy-MM-dd", CultureInfo.CurrentCulture);
                 else
@@ -1014,7 +1014,7 @@ namespace MarkMpn.FetchXmlToWebAPI
             if (type == typeof(Guid))
                 return "'" + Guid.Parse(s).ToString() + "'";
 
-            return HttpUtility.UrlEncode(Convert.ChangeType(s, type, CultureInfo.CurrentCulture).ToString());
+            return HttpUtility.UrlEncode(Convert.ChangeType(s, type, CultureInfo.CurrentCulture).ToString()) ?? "";
         }
 
         private IEnumerable<OrderOData> ConvertOrder(string entityName, object[] items)
@@ -1030,10 +1030,11 @@ namespace MarkMpn.FetchXmlToWebAPI
             if (!String.IsNullOrEmpty(orderitem.alias))
                 throw new NotSupportedException($"OData queries do not support ordering on link entities. Please remove the sort on {orderitem.alias}.{orderitem.attribute}");
 
-            var attrMetadata = _metadata.GetEntity(entityName).Attributes.FirstOrDefault(a => a.LogicalName == orderitem.attribute);
-            if (attrMetadata == null)
-                throw new NotSupportedException($"No metadata for attribute {entityName}.{orderitem.attribute}");
-
+            var attrMetadata = _metadata.GetEntity(entityName)
+                .Attributes
+                .FirstOrDefault(a => a.LogicalName == orderitem.attribute) 
+                ?? throw new NotSupportedException($"No metadata for attribute {entityName}.{orderitem.attribute}");
+            
             var odata = new OrderOData
             {
                 PropertyName = GetPropertyName(attrMetadata),
@@ -1049,9 +1050,9 @@ namespace MarkMpn.FetchXmlToWebAPI
             return entityMeta.EntitySetName ?? entityMeta.LogicalCollectionName;
         }
 
-        private string LinkItemToNavigationProperty(string entityname, FetchLinkEntityType linkitem, out bool child, out FetchLinkEntityType? manyToManyNextLink)
+        private string LinkItemToNavigationProperty(string entityname, FetchLinkEntityType linkitem, out bool child, out FetchLinkEntityType manyToManyNextLink)
         {
-            manyToManyNextLink = null;
+            manyToManyNextLink = new FetchLinkEntityType();
             var entity = _metadata.GetEntity(entityname);
             foreach (var relation in entity.OneToManyRelationships
                 .Where(r =>
