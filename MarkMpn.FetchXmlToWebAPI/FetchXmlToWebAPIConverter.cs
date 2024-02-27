@@ -18,7 +18,7 @@ namespace MarkMpn.FetchXmlToWebAPI
         {
             protected virtual string Separator => ";";
 
-            public string? PropertyName { get; set; }
+            public string PropertyName { get; set; }
 
             public List<string> Select { get; } = new List<string>();
 
@@ -122,7 +122,7 @@ namespace MarkMpn.FetchXmlToWebAPI
 
         sealed class OrderOData
         {
-            public string? PropertyName { get; set; }
+            public string PropertyName { get; set; }
 
             public bool Descending { get; set; }
 
@@ -184,7 +184,7 @@ namespace MarkMpn.FetchXmlToWebAPI
                 if (reader != null)
                 {
 #pragma warning disable CA5369 // Use XmlReader for 'XmlSerializer.Deserialize()'
-                    object? parsed = serializer.Deserialize(reader);
+                    object parsed = serializer.Deserialize(reader);
 #pragma warning restore CA5369 // Use XmlReader for 'XmlSerializer.Deserialize()'
                     if (parsed is FetchType _fetchType)
                     {
@@ -477,7 +477,7 @@ namespace MarkMpn.FetchXmlToWebAPI
                     result += "/Value";
                 }
                 
-                string? function = null;
+                string function = null;
                 var functionParameters = 1;
                 var functionParameterType = typeof(string);
                 var value = condition.value;
@@ -503,12 +503,12 @@ namespace MarkMpn.FetchXmlToWebAPI
                         break;
                     case @operator.like:
                     case @operator.notlike:
-                        var hasInitialWildcard = value.StartsWith('%');
+                        var hasInitialWildcard = value.StartsWith("%");
                         if (hasInitialWildcard)
-                            value = value[1..];
-                        var hasTerminalWildcard = value.EndsWith('%');
+                            value = value.Take(1).ToString();
+                        var hasTerminalWildcard = value?.EndsWith("%") ?? false;
                         if (hasTerminalWildcard)
-                            value = value[..^1];
+                            value = value.Substring(0, value.Length - 1);
 
                         if (!FetchXmlToWebAPIConverter.AreAllLikeWildcardsEscaped(value))
                             throw new NotSupportedException("OData queries do not support complex LIKE wildcards. Only % at the start or end of the value is supported");
@@ -956,7 +956,7 @@ namespace MarkMpn.FetchXmlToWebAPI
                 .Replace("[[]", "[");
         }
 
-        private FetchLinkEntityType? FindLinkEntity(string entityName, object[] items, string alias, string path, out string navigationProperty, out bool child)
+        private FetchLinkEntityType FindLinkEntity(string entityName, object[] items, string alias, string path, out string navigationProperty, out bool child)
         {
             child = false;
             navigationProperty = path;
@@ -993,7 +993,7 @@ namespace MarkMpn.FetchXmlToWebAPI
             return attr.LogicalName;
         }
 
-        private static string? FormatValue(Type type, string s)
+        private static string FormatValue(Type type, string s)
         {
             if (type == typeof(string))
                 return "'" + HttpUtility.UrlEncode(s.Replace("'", "''")) + "'";
