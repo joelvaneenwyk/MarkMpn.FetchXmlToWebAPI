@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using JetBrains.Annotations;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 
 namespace MarkMpn.FetchXmlToWebAPI.Tests
 {
+    [UsedImplicitly]
     internal sealed class RetrieveAllEntitiesRequestExecutor : IFakeMessageExecutor
     {
         private readonly Func<IEnumerable<EntityMetadata>> _getEntities;

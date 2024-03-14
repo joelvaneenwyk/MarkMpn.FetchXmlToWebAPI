@@ -4,29 +4,28 @@ using System.Linq;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Middleware;
-using FakeXrmEasy.Middleware.Crud;
-using FakeXrmEasy.Middleware.Messages;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using System.Runtime.InteropServices;
-using FakeXrmEasy.Middleware.Pipeline;
+using JetBrains.Annotations;
 
 namespace MarkMpn.FetchXmlToWebAPI.Tests
 {
     [TestClass]
     public class FetchXmlConversionTests
     {
+        [UsedImplicitly]
+#pragma warning disable IDE0052
         private readonly IOrganizationService _service;
+#pragma warning restore IDE0052
+
         private readonly IXrmFakedContext _context;
 
         private readonly List<OneToManyRelationshipMetadata> _relationships = new();
         private readonly List<EntityMetadata> _entities = new();
 
         private Span<EntityMetadata> Entities => CollectionsMarshal.AsSpan(this._entities);
-
-        public IOrganizationService Service => _service;
 
         public FetchXmlConversionTests()
         {

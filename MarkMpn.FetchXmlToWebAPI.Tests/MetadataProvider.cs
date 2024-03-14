@@ -7,18 +7,18 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 {
     internal sealed class MetadataProvider : IMetadataProvider
     {
-        private readonly IOrganizationService org;
+        private readonly IOrganizationService _org;
 
         public MetadataProvider(IOrganizationService org)
         {
-            this.org = org;
+            this._org = org;
         }
 
         public bool IsConnected => true;
 
         public EntityMetadata GetEntity(string logicalName)
         {
-            var resp = (RetrieveEntityResponse)org.Execute(
+            var resp = (RetrieveEntityResponse)_org.Execute(
                 new RetrieveEntityRequest
                 {
                     LogicalName = logicalName,
@@ -29,7 +29,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
         public EntityMetadata GetEntity(int otc)
         {
-            var resp = (RetrieveAllEntitiesResponse)org.Execute(
+            var resp = (RetrieveAllEntitiesResponse)_org.Execute(
                 new RetrieveAllEntitiesRequest
                 {
                     EntityFilters = EntityFilters.Entity | EntityFilters.Attributes | EntityFilters.Relationships
