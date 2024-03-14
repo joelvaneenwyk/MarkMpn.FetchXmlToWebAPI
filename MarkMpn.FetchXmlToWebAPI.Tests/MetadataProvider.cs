@@ -91,6 +91,7 @@ internal sealed class MetadataProvider : IMetadataProvider
 
     public EntityMetadata GetEntity(string logicalName)
     {
+        ArgumentNullException.ThrowIfNull(logicalName);                   
         var resp = (RetrieveEntityResponse)_org.Execute(
             new RetrieveEntityRequest
             {

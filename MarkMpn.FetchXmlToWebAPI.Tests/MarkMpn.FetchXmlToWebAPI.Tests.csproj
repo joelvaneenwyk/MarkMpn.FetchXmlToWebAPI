@@ -23,6 +23,12 @@
         <Title>$(AssemblyName)</Title>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="3.4.0" />
         <PackageReference Include="FakeXrmEasy.Core.v9" Version="3.4.2" />
