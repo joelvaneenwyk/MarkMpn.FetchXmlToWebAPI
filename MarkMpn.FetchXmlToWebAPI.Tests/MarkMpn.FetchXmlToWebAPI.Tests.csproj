@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
         <AssemblyName>MarkMpn.FetchXmlToWebAPI.Tests</AssemblyName>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
         <PackageTags>dataverse;linqpaddriver;commondataservice;powerapps;dynamics365</PackageTags>
         <VersionPrefix>1.7.5</VersionPrefix>
         <Authors>Natraj Yegnaraman, Joel Van Eenwyk</Authors>
@@ -19,25 +19,26 @@
         <EnableMSTestRunner>true</EnableMSTestRunner>
         <IsPackable>false</IsPackable>
         <Title>$(AssemblyName)</Title>
+        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="3.4.0"/>
-        <PackageReference Include="FakeXrmEasy.Core.v9" Version="3.4.2"/>
-        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0"/>
-        <PackageReference Include="Microsoft.CodeCoverage" Version="17.9.0"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0"/>
-        <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="3.0.3"/>
-        <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="17.9.0"/>
-        <PackageReference Include="MSTest" Version="3.2.2"/>
-        <PackageReference Include="MSTest.TestAdapter" Version="3.2.2"/>
-        <PackageReference Include="MSTest.TestFramework" Version="3.2.2"/>
-        <PackageReference Include="System.Linq" Version="4.3.0"/>
+        <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="3.4.0" />
+        <PackageReference Include="FakeXrmEasy.Core.v9" Version="3.4.2" />
+        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
+        <PackageReference Include="Microsoft.CodeCoverage" Version="17.9.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+        <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="3.0.3" />
+        <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="17.9.0" />
+        <PackageReference Include="MSTest" Version="3.2.2" />
+        <PackageReference Include="MSTest.TestAdapter" Version="3.2.2" />
+        <PackageReference Include="MSTest.TestFramework" Version="3.2.2" />
+        <PackageReference Include="System.Linq" Version="4.3.0" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Remove="obj/**"/>
-        <EmbeddedResource Remove="obj/**"/>
-        <Page Remove="obj/**"/>
-        <None Remove="obj/**"/>
+        <Compile Remove="obj/**" />
+        <EmbeddedResource Remove="obj/**" />
+        <Page Remove="obj/**" />
+        <None Remove="obj/**" />
     </ItemGroup>
-    <Import Project="../MarkMpn.FetchXmlToWebAPI/MarkMpn.FetchXmlToWebAPI.projitems" Label="Shared"/>
+    <Import Project="../MarkMpn.FetchXmlToWebAPI/MarkMpn.FetchXmlToWebAPI.projitems" Label="Shared" />
 </Project>

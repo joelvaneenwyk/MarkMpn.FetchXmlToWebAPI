@@ -31,7 +31,7 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet }}
           cache: true
-          cache-dependency-path: MarkMpn.FetchXmlToWebAPI/packages.lock.json
+          cache-dependency-path: MarkMpn.FetchXmlToWebAPI.Tests/packages.lock.json
 
       - name: Restore dependencies
         run: dotnet restore --locked-mode
