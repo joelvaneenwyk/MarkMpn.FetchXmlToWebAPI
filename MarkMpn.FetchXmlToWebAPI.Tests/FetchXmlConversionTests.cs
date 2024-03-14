@@ -1,59 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Abstractions.Enums;
-using FakeXrmEasy.Middleware;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using System.Runtime.InteropServices;
-using JetBrains.Annotations;
 
 namespace MarkMpn.FetchXmlToWebAPI.Tests
 {
     [TestClass]
-    public class FetchXmlConversionTests
+    public class FetchXmlConversionTests : FakeXrmEasyTestsBase
     {
-        [UsedImplicitly]
-#pragma warning disable IDE0052
-        private readonly IOrganizationService _service;
-#pragma warning restore IDE0052
-
-        private readonly IXrmFakedContext _context;
 
         private readonly List<OneToManyRelationshipMetadata> _relationships = new();
         private readonly List<EntityMetadata> _entities = new();
 
         private Span<EntityMetadata> Entities => CollectionsMarshal.AsSpan(this._entities);
-
-        public FetchXmlConversionTests()
-        {
-            _context = XrmFakedContextFactory.New(FakeXrmEasyLicense.RPL_1_5);
-
-            // _context = MiddlewareBuilder
-            //             .New()
-            //
-            //             // Add* -> Middleware configuration
-            //             .AddCrud()
-            //             .AddFakeMessageExecutors()
-            //             .AddGenericFakeMessageExecutors()
-            //
-            //             // .AddFakeMessageExecutor<RetrieveAllEntitiesRequest>(
-            //             //     new RetrieveAllEntitiesRequestExecutor(() => this._entities))
-            //
-            //             .AddPipelineSimulation()
-            //
-            //             // Use* -> Defines pipeline sequence
-            //             .UsePipelineSimulation()
-            //             .UseCrud()
-            //             .UseMessages()
-            //
-            //             .SetLicense(FakeXrmEasyLicense.RPL_1_5)
-            //             .Build();
-
-            _service = _context.GetOrganizationService();
-        }
 
         [TestMethod]
         public void SimpleQuery()
@@ -755,9 +716,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
                 nameof(EntityMetadata.ObjectTypeCode), 112);
 
             foreach (ref var entity in this.Entities)
-                this._context.SetEntityMetadata(entity);
+                this.Context.SetEntityMetadata(entity);
 
-            var org = this._context.GetOrganizationService();
+            var org = this.Context.GetOrganizationService();
             var converter = new FetchXmlToWebAPIConverter(new MetadataProvider(org), $"https://example.crm.dynamics.com/api/data/v9.0");
             return converter.ConvertFetchXmlToWebAPI(fetch);
         }
