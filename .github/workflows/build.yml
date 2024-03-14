@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dotnet: [8.0.x]
+        dotnet: [8.x]
         framework: [net6.0-windows, net7.0-windows, net8.0-windows]
         os: [windows-latest]
         platform: [Any CPU]
@@ -29,7 +29,8 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ matrix.dotnet }}
-          cache: on
+          cache: true
+          cache-dependency-path: src/MarkMpn.FetchXmlToWebAPI/packages.lock.json
 
       - name: Restore dependencies
         run: dotnet restore --locked-mode
