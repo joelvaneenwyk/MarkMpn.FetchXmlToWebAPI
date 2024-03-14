@@ -29,9 +29,13 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ matrix.dotnet }}
+          cache: on
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore --locked-mode
 
+      # The '--graph' parameter is to address an occasional build error about files being
+      # used by another process the during 'GenerateRuntimeConfigurationFiles'
+      # task: https://github.com/dotnet/msbuild/issues/6690#issuecomment-1553272562
       - name: Build
-        run: dotnet build -c "${{ matrix.config }}" -p:Platform="${{ matrix.platform }}" --framework "${{ matrix.framework }}" --no-restore --verbosity normal
+        run: dotnet build --graph -c "${{ matrix.config }}" -p:Platform="${{ matrix.platform }}" --framework "${{ matrix.framework }}" --no-restore --verbosity normal
