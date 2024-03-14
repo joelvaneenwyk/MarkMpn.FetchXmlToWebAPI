@@ -10,10 +10,10 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
     [TestClass]
     public class FetchXmlConversionTests : FakeXrmEasyTestsBase
     {
-        private readonly List<OneToManyRelationshipMetadata> _relationships = new();
-        private readonly List<EntityMetadata> _entities = new();
 
-        private Span<EntityMetadata> Entities => CollectionsMarshal.AsSpan(this._entities);
+
+
+
 
         [TestMethod]
         public void SimpleQuery()
@@ -592,212 +592,212 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
             Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts", odata);
         }
 
-        private string ConvertFetchToOData(string fetch)
-        {
-            // Add basic metadata
-            this._relationships.AddRange(new[]
-            {
-                new OneToManyRelationshipMetadata
-                {
-                    SchemaName = "contact_customer_accounts",
-                    ReferencedEntity = "account",
-                    ReferencedAttribute = "accountid",
-                    ReferencingEntity = "contact",
-                    ReferencingAttribute = "parentcustomerid"
-                },
-                new OneToManyRelationshipMetadata
-                {
-                    SchemaName = "account_primarycontact",
-                    ReferencedEntity = "contact",
-                    ReferencedAttribute = "contactid",
-                    ReferencingEntity = "account",
-                    ReferencingAttribute = "primarycontactid"
-                }
-            });
 
-            this._entities.AddRange(new[]
-            {
-                new EntityMetadata
-                {
-                    LogicalName = "account",
-                    EntitySetName = "accounts"
-                },
-                new EntityMetadata
-                {
-                    LogicalName = "contact",
-                    EntitySetName = "contacts"
-                },
-                new EntityMetadata
-                {
-                    LogicalName = "connection",
-                    EntitySetName = "connections"
-                },
-                new EntityMetadata
-                {
-                    LogicalName = "webresource",
-                    EntitySetName = "webresourceset"
-                },
-                new EntityMetadata
-                {
-                    LogicalName = "stringmap",
-                    EntitySetName = "stringmaps"
-                },
-                new EntityMetadata
-                {
-                    LogicalName = "incident",
-                    EntitySetName = "incidents"
-                }
-            });
 
-            var attributes = new Dictionary<string, AttributeMetadata[]>
-            {
-                ["account"] = new AttributeMetadata[]
-                {
-                    new UniqueIdentifierAttributeMetadata
-                    {
-                        LogicalName = "accountid"
-                    },
-                    new StringAttributeMetadata
-                    {
-                        LogicalName = "name"
-                    },
-                    new StringAttributeMetadata
-                    {
-                        LogicalName = "websiteurl"
-                    },
-                    new LookupAttributeMetadata
-                    {
-                        LogicalName = "primarycontactid",
-                        Targets = new[] { "contact" }
-                    }
-                },
-                ["contact"] = new AttributeMetadata[]
-                {
-                    new UniqueIdentifierAttributeMetadata
-                    {
-                        LogicalName = "contactid"
-                    },
-                    new StringAttributeMetadata
-                    {
-                        LogicalName = "firstname"
-                    },
-                    new LookupAttributeMetadata
-                    {
-                        LogicalName = "parentcustomerid",
-                        Targets = new[] { "account", "contact" }
-                    },
-                    new DateTimeAttributeMetadata
-                    {
-                        LogicalName = "createdon"
-                    }
-                },
-                ["connection"] = new AttributeMetadata[]
-                {
-                    new UniqueIdentifierAttributeMetadata
-                    {
-                        LogicalName = "connectionid"
-                    },
-                    new PicklistAttributeMetadata
-                    {
-                        LogicalName = "record1objecttypecode"
-                    }
-                },
-                ["incident"] = new AttributeMetadata[]
-                {
-                    new UniqueIdentifierAttributeMetadata
-                    {
-                        LogicalName = "incidentid"
-                    }
-                },
-                ["stringmap"] = new AttributeMetadata[]
-                {
-                    new UniqueIdentifierAttributeMetadata
-                    {
-                        LogicalName = "stringmapid"
-                    },
-                    new EntityNameAttributeMetadata
-                    {
-                        LogicalName = "objecttypecode"
-                    },
-                    new StringAttributeMetadata
-                    {
-                        LogicalName = "attributename"
-                    },
-                    new IntegerAttributeMetadata
-                    {
-                        LogicalName = "attributevalue"
-                    },
-                    new StringAttributeMetadata
-                    {
-                        LogicalName = "value"
-                    }
-                },
-                ["webresource"] = new AttributeMetadata[]
-                {
-                    new UniqueIdentifierAttributeMetadata
-                    {
-                        LogicalName = "webresourceid"
-                    },
-                    new StringAttributeMetadata
-                    {
-                        LogicalName = "name"
-                    },
-                    new ManagedPropertyAttributeMetadata
-                    {
-                        LogicalName = "iscustomizable"
-                    }
-                }
-            };
 
-            SetSealedProperty(
-                attributes["webresource"].First(a => a.LogicalName == "iscustomizable"),
-                nameof(ManagedPropertyAttributeMetadata.ValueAttributeTypeCode), AttributeTypeCode.Boolean);
-            FetchXmlConversionTests.SetRelationships(this._entities.ToArray(), this._relationships.ToArray());
-            FetchXmlConversionTests.SetAttributes(this._entities.ToArray(), attributes);
-            SetSealedProperty(
-                this._entities.First(e => e.LogicalName == "incident"),
-                nameof(EntityMetadata.ObjectTypeCode), 112);
 
-            foreach (ref var entity in this.Entities)
-                this.Context.SetEntityMetadata(entity);
 
-            var org = this.Context.GetOrganizationService();
-            var converter = new FetchXmlToWebAPIConverter(new MetadataProvider(org),
-                $"https://example.crm.dynamics.com/api/data/v9.0");
-            return converter.ConvertFetchXmlToWebAPI(fetch);
-        }
 
-        private static void SetAttributes(EntityMetadata[] entities, Dictionary<string, AttributeMetadata[]> attributes)
-        {
-            foreach (var entity in entities)
-            {
-                SetSealedProperty(entity, nameof(EntityMetadata.PrimaryIdAttribute),
-                    attributes[entity.LogicalName].OfType<UniqueIdentifierAttributeMetadata>().First().LogicalName);
-                SetSealedProperty(entity, nameof(EntityMetadata.Attributes), attributes[entity.LogicalName]);
-            }
-        }
 
-        private static void SetRelationships(EntityMetadata[] entities, OneToManyRelationshipMetadata[] relationships)
-        {
-            foreach (var relationship in relationships)
-            {
-                relationship.ReferencingEntityNavigationPropertyName = relationship.ReferencingAttribute;
-                relationship.ReferencedEntityNavigationPropertyName = relationship.SchemaName;
-            }
 
-            foreach (var entity in entities)
-            {
-                var oneToMany = relationships.Where(r => r.ReferencedEntity == entity.LogicalName).ToArray();
-                var manyToOne = relationships.Where(r => r.ReferencingEntity == entity.LogicalName).ToArray();
 
-                SetSealedProperty(entity, nameof(EntityMetadata.OneToManyRelationships), oneToMany);
-                SetSealedProperty(entity, nameof(EntityMetadata.ManyToOneRelationships), manyToOne);
-            }
-        }
 
-        private static void SetSealedProperty(object target, string name, object value)
-        {
-            target.GetType().GetProperty(name)?.SetValue(target, value, null);
-        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }
