@@ -7,39 +7,43 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 
-namespace MarkMpn.FetchXmlToWebAPI.Tests
+namespace MarkMpn.FetchXmlToWebAPI.Tests;
+
+[UsedImplicitly]
+internal sealed class RetrieveAllEntitiesRequestExecutor : IFakeMessageExecutor
 {
-    [UsedImplicitly]
-    internal sealed class RetrieveAllEntitiesRequestExecutor : IFakeMessageExecutor
+    private readonly Func<IEnumerable<EntityMetadata>> _getEntities;
+
+    public RetrieveAllEntitiesRequestExecutor()
     {
-        private readonly Func<IEnumerable<EntityMetadata>> _getEntities;
+        _getEntities = Array.Empty<EntityMetadata>;
+    }
 
-        public RetrieveAllEntitiesRequestExecutor(Func<IEnumerable<EntityMetadata>> getEntities)
+    public RetrieveAllEntitiesRequestExecutor(Func<IEnumerable<EntityMetadata>> getEntities)
+    {
+        _getEntities = getEntities;
+    }
+
+    private IEnumerable<EntityMetadata> Entities => _getEntities();
+
+    public bool CanExecute(OrganizationRequest request)
+    {
+        return request is RetrieveAllEntitiesRequest;
+    }
+
+    public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
+    {
+        return new RetrieveAllEntitiesResponse
         {
-            _getEntities = getEntities;
-        }
-
-        private IEnumerable<EntityMetadata> Entities => _getEntities();
-
-        public bool CanExecute(OrganizationRequest request)
-        {
-            return request is RetrieveAllEntitiesRequest;
-        }
-
-        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
-        {
-            return new RetrieveAllEntitiesResponse
+            Results = new ParameterCollection
             {
-                Results = new ParameterCollection
-                {
-                    ["EntityMetadata"] = Entities
-                }
-            };
-        }
+                ["EntityMetadata"] = Entities
+            }
+        };
+    }
 
-        public Type GetResponsibleRequestType()
-        {
-            return typeof(RetrieveAllEntitiesRequest);
-        }
+    public Type GetResponsibleRequestType()
+    {
+        return typeof(RetrieveAllEntitiesRequest);
     }
 }

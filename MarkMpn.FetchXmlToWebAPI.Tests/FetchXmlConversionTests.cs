@@ -10,7 +10,6 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
     [TestClass]
     public class FetchXmlConversionTests : FakeXrmEasyTestsBase
     {
-
         private readonly List<OneToManyRelationshipMetadata> _relationships = new();
         private readonly List<EntityMetadata> _entities = new();
 
@@ -46,7 +45,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)",
+                odata);
         }
 
         [TestMethod]
@@ -64,7 +65,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname)", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname)",
+                odata);
         }
 
         [TestMethod]
@@ -82,7 +85,8 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(name eq 'FXB')", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(name eq 'FXB')", odata);
         }
 
         [TestMethod]
@@ -104,7 +108,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(name eq 'FXB' and (websiteurl eq 'xrmtoolbox.com' or websiteurl eq 'fetchxmlbuilder.com'))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(name eq 'FXB' and (websiteurl eq 'xrmtoolbox.com' or websiteurl eq 'fetchxmlbuilder.com'))",
+                odata);
         }
 
         [TestMethod]
@@ -120,7 +126,8 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$orderby=name asc", odata);
+            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$orderby=name asc",
+                odata);
         }
 
         [TestMethod]
@@ -151,7 +158,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$apply=groupby((name),aggregate($count as count))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$apply=groupby((name),aggregate($count as count))",
+                odata);
         }
 
         [TestMethod]
@@ -167,7 +176,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$apply=groupby((name),aggregate(websiteurl with max as maxwebsite))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$apply=groupby((name),aggregate(websiteurl with max as maxwebsite))",
+                odata);
         }
 
         [TestMethod]
@@ -185,7 +196,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)&$filter=(primarycontactid/contactid ne null)", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)&$filter=(primarycontactid/contactid ne null)",
+                odata);
         }
 
         [TestMethod]
@@ -206,7 +219,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)&$filter=(primarycontactid/firstname eq 'Mark')", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)&$filter=(primarycontactid/firstname eq 'Mark')",
+                odata);
         }
 
         [TestMethod]
@@ -227,7 +242,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)&$filter=(primarycontactid/Microsoft.Dynamics.CRM.On(PropertyName='createdon',PropertyValue='2020-01-01'))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)&$filter=(primarycontactid/Microsoft.Dynamics.CRM.On(PropertyName='createdon',PropertyValue='2020-01-01'))",
+                odata);
         }
 
         [TestMethod]
@@ -245,7 +262,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname)&$filter=(contact_customer_accounts/any(o1:(o1/contactid ne null)))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname)&$filter=(contact_customer_accounts/any(o1:(o1/contactid ne null)))",
+                odata);
         }
 
         [TestMethod]
@@ -266,7 +285,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname;$filter=(firstname eq 'Mark'))&$filter=(contact_customer_accounts/any(o1:(o1/firstname eq 'Mark')))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname;$filter=(firstname eq 'Mark'))&$filter=(contact_customer_accounts/any(o1:(o1/firstname eq 'Mark')))",
+                odata);
         }
 
         [TestMethod]
@@ -287,7 +308,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname;$filter=(Microsoft.Dynamics.CRM.On(PropertyName='createdon',PropertyValue='2020-01-01')))&$filter=(contact_customer_accounts/any(o1:(o1/Microsoft.Dynamics.CRM.On(PropertyName='createdon',PropertyValue='2020-01-01'))))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname;$filter=(Microsoft.Dynamics.CRM.On(PropertyName='createdon',PropertyValue='2020-01-01')))&$filter=(contact_customer_accounts/any(o1:(o1/Microsoft.Dynamics.CRM.On(PropertyName='createdon',PropertyValue='2020-01-01'))))",
+                odata);
         }
 
         [TestMethod]
@@ -305,7 +328,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(startswith(name, 'FXB'))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(startswith(name, 'FXB'))",
+                odata);
         }
 
         [TestMethod]
@@ -326,7 +351,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname;$filter=(startswith(firstname, 'FXB')))&$filter=(contact_customer_accounts/any(o1:(startswith(o1%2ffirstname, 'FXB'))))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname;$filter=(startswith(firstname, 'FXB')))&$filter=(contact_customer_accounts/any(o1:(startswith(o1%2ffirstname, 'FXB'))))",
+                odata);
         }
 
         [TestMethod]
@@ -344,7 +371,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(endswith(name, 'FXB'))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(endswith(name, 'FXB'))",
+                odata);
         }
 
         [TestMethod]
@@ -362,7 +391,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(contains(name, 'FXB'))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(contains(name, 'FXB'))",
+                odata);
         }
 
         [TestMethod]
@@ -380,7 +411,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(startswith(name, '%5bFXB'))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(startswith(name, '%5bFXB'))",
+                odata);
         }
 
         [TestMethod]
@@ -417,7 +450,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/stringmaps?$select=attributevalue,attributename,value&$filter=(attributename eq 'prioritycode' and objecttypecode eq 'incident')", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/stringmaps?$select=attributevalue,attributename,value&$filter=(attributename eq 'prioritycode' and objecttypecode eq 'incident')",
+                odata);
         }
 
         [TestMethod]
@@ -435,7 +470,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/connections?$select=connectionid&$filter=(record1objecttypecode eq 8)", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/connections?$select=connectionid&$filter=(record1objecttypecode eq 8)",
+                odata);
         }
 
         [TestMethod]
@@ -454,7 +491,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/webresourceset?$select=name,iscustomizable&$filter=(iscustomizable/Value eq true)", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/webresourceset?$select=name,iscustomizable&$filter=(iscustomizable/Value eq true)",
+                odata);
         }
 
         [TestMethod]
@@ -498,7 +537,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(accountid eq '3fee3d59-68c9-ed11-b597-0022489b41c4')", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(accountid eq '3fee3d59-68c9-ed11-b597-0022489b41c4')",
+                odata);
         }
 
         [TestMethod]
@@ -515,7 +556,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(contact_customer_accounts/any(o1:(o1/contactid ne null)))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(contact_customer_accounts/any(o1:(o1/contactid ne null)))",
+                odata);
         }
 
         [TestMethod]
@@ -719,7 +762,8 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
                 this.Context.SetEntityMetadata(entity);
 
             var org = this.Context.GetOrganizationService();
-            var converter = new FetchXmlToWebAPIConverter(new MetadataProvider(org), $"https://example.crm.dynamics.com/api/data/v9.0");
+            var converter = new FetchXmlToWebAPIConverter(new MetadataProvider(org),
+                $"https://example.crm.dynamics.com/api/data/v9.0");
             return converter.ConvertFetchXmlToWebAPI(fetch);
         }
 
@@ -727,7 +771,8 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         {
             foreach (var entity in entities)
             {
-                SetSealedProperty(entity, nameof(EntityMetadata.PrimaryIdAttribute), attributes[entity.LogicalName].OfType<UniqueIdentifierAttributeMetadata>().First().LogicalName);
+                SetSealedProperty(entity, nameof(EntityMetadata.PrimaryIdAttribute),
+                    attributes[entity.LogicalName].OfType<UniqueIdentifierAttributeMetadata>().First().LogicalName);
                 SetSealedProperty(entity, nameof(EntityMetadata.Attributes), attributes[entity.LogicalName]);
             }
         }

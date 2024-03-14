@@ -354,13 +354,12 @@ namespace MarkMpn.FetchXmlToWebAPI
             }
         }
 
-        private IEnumerable<string> ConvertSelect(string entityName, object[] items)
+        private IEnumerable<string> ConvertSelect(string entityName, IEnumerable<object>? items)
         {
-            var attributeitems = items
-                .OfType<FetchAttributeType>()
-                .Where(i => i.name != null);
-
-            return GetAttributeNames(entityName, attributeitems);
+            var attributeTypes = items?.OfType<FetchAttributeType>()
+                .Where(i => i.name != null)
+                ?? Enumerable.Empty<FetchAttributeType>();
+            return GetAttributeNames(entityName, attributeTypes);
         }
 
         private IEnumerable<string> GetAttributeNames(string entityName, IEnumerable<FetchAttributeType> attributeItemTypes)
