@@ -267,24 +267,13 @@ namespace MarkMpn.FetchXmlToWebAPI
                 .Select(a => a.aggregate == AggregateType.count ? $"$count as {a.alias}" : $"{a.name} with {GetAggregateType(a.aggregate)} as {a.alias}");
         }
 
-        private static string GetAggregateType(AggregateType aggregate)
-        {
-            switch (aggregate)
+        private static string GetAggregateType(AggregateType aggregate) => aggregate switch
             {
-                case AggregateType.avg:
-                    return "average";
-
-                case AggregateType.countcolumn:
-                    return "countdistinct";
-
-                case AggregateType.max:
-                case AggregateType.min:
-                case AggregateType.sum:
-                    return aggregate.ToString();
-            }
-
-            throw new NotSupportedException("Unknown aggregate type " + aggregate);
-        }
+                AggregateType.avg => "average",
+                AggregateType.countcolumn => "countdistinct",
+                AggregateType.max or AggregateType.min or AggregateType.sum => aggregate.ToString(),
+                _ => throw new NotSupportedException("Unknown aggregate type " + aggregate),
+            };
 
         private List<FilterOData> ConvertInnerJoinFilters(string entityName, object[] items, object[] rootEntityItems, string path, ref int count)
         {
@@ -417,12 +406,13 @@ namespace MarkMpn.FetchXmlToWebAPI
             var result = "";
             if (!string.IsNullOrEmpty(condition.attribute))
             {
-                if (!String.IsNullOrEmpty(condition.entityname))
+                if (!string.IsNullOrEmpty(condition.entityname))
                 {
-                    var linkEntity = 
-                        FindLinkEntity(entityName, rootEntityItems, condition.entityname, "", out navigationProperty, out var child) 
-                        ?? throw new NotSupportedException($"Cannot find filter entity " + condition.entityname);
-                    
+                    var linkEntity = (
+                        FindLinkEntity(entityName, rootEntityItems, condition.entityname, "", out navigationProperty, out var child)
+                        ?? throw new NotSupportedException($"Cannot find filter entity " + condition.entityname)
+                    );
+
                     if (child)
                     {
                         // Filtering a child collection separately has different semantics in OData vs. FetchXML, e.g.:
@@ -1030,11 +1020,11 @@ namespace MarkMpn.FetchXmlToWebAPI
             if (!String.IsNullOrEmpty(orderitem.alias))
                 throw new NotSupportedException($"OData queries do not support ordering on link entities. Please remove the sort on {orderitem.alias}.{orderitem.attribute}");
 
-            var attrMetadata = _metadata.GetEntity(entityName)
-                .Attributes
-                .FirstOrDefault(a => a.LogicalName == orderitem.attribute) 
-                ?? throw new NotSupportedException($"No metadata for attribute {entityName}.{orderitem.attribute}");
-            
+            var attrMetadata = (
+                _metadata.GetEntity(entityName).Attributes.FirstOrDefault(a => a.LogicalName == orderitem.attribute)
+                ?? throw new NotSupportedException($"No metadata for attribute {entityName}.{orderitem.attribute}")
+            );
+
             var odata = new OrderOData
             {
                 PropertyName = GetPropertyName(attrMetadata),
