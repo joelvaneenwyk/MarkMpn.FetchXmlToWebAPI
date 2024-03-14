@@ -3,9 +3,9 @@
     <TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
     <AssemblyName>MarkMpn.FetchXmlToWebAPI.Tests</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageTags>dataverse,linqpaddriver,commondataservice,powerapps,dynamics365</PackageTags>
+    <PackageTags>dataverse;linqpaddriver;commondataservice;powerapps;dynamics365</PackageTags>
     <VersionPrefix>1.7.5</VersionPrefix>
-    <Authors>Natraj Yegnaraman</Authors>
+    <Authors>Natraj Yegnaraman, Joel Van Eenwyk</Authors>
     <Company>Natraj Yegnaraman</Company>
     <RootNamespace>MarkMpn.FetchXmlToWebAPI.Tests</RootNamespace>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -17,9 +17,10 @@
     <BaseOutputPath>$(SolutionDir).build\obj\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</BaseOutputPath>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
-    <WarningLevel>7</WarningLevel>
+    <WarningLevel>9999</WarningLevel>
     <EnableMSTestRunner>true</EnableMSTestRunner>
     <IsPackable>false</IsPackable>
+    <Title>$(AssemblyName)</Title>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="3.4.0" />
