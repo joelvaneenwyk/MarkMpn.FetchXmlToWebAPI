@@ -41,3 +41,6 @@ jobs:
       # task: https://github.com/dotnet/msbuild/issues/6690#issuecomment-1553272562
       - name: Build
         run: dotnet build --graph -c "${{ matrix.config }}" -p:Platform="${{ matrix.platform }}" --framework "${{ matrix.framework }}" --no-restore --verbosity normal
+
+      - name: Test
+        run: dotnet test --no-build --verbosity normal --configuration "${{ matrix.config }}" --framework "${{ matrix.framework }}" --collect:"XPlat Code Coverage" --results-directory:.build/TestResults --logger:trx
