@@ -19,6 +19,7 @@ jobs:
         config: [Debug, Release]
 
     runs-on: ${{ matrix.os }}
+    name: ${{ matrix.config }} [${{ matrix.framework }}]
 
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +31,7 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet }}
           cache: true
-          cache-dependency-path: src/MarkMpn.FetchXmlToWebAPI/packages.lock.json
+          cache-dependency-path: MarkMpn.FetchXmlToWebAPI/packages.lock.json
 
       - name: Restore dependencies
         run: dotnet restore --locked-mode
