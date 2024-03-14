@@ -13,9 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         dotnet: [8.0.x]
-        framework: [net6.0, net7.0, net8.0]
+        framework: [net6.0-windows, net7.0-windows, net8.0-windows]
         os: [windows-latest]
-        config: [Any CPU]
+        platform: [Any CPU]
+        config: [Debug, Release]
 
     runs-on: ${{ matrix.os }}
 
@@ -33,4 +34,4 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build -c ${{ matrix.config }} --no-restore --verbosity normal --framework ${{ matrix.framework }}
+        run: dotnet build -c "${{ matrix.config }}" -p:Platform="${{ matrix.platform }}" --framework "${{ matrix.framework }}" --no-restore --verbosity normal
