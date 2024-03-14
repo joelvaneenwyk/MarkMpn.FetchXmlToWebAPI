@@ -23,7 +23,6 @@ public class FakeXrmEasyTestsBase
             .New()
             .AddCrud()
             .AddFakeMessageExecutors(Assembly.GetAssembly(typeof(AddListMembersListRequestExecutor)))
-            .AddFakeMessageExecutors(Assembly.GetAssembly(typeof(RetrieveAllEntitiesRequestExecutor)))
             .UseCrud()
             .UseMessages()
             .SetLicense(FakeXrmEasyLicense.RPL_1_5)
