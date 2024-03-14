@@ -35,14 +35,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="obj/**" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Remove="obj/**" />
-  </ItemGroup>
-  <ItemGroup>
     <Page Remove="obj/**" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="obj/**" />
   </ItemGroup>
   <Import Project="../MarkMpn.FetchXmlToWebAPI/MarkMpn.FetchXmlToWebAPI.projitems" Label="Shared" />

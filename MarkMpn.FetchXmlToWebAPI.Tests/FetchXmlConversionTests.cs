@@ -33,22 +33,22 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             // _context = MiddlewareBuilder
             //             .New()
-            // 
+            //
             //             // Add* -> Middleware configuration
             //             .AddCrud()
             //             .AddFakeMessageExecutors()
             //             .AddGenericFakeMessageExecutors()
-            // 
+            //
             //             // .AddFakeMessageExecutor<RetrieveAllEntitiesRequest>(
             //             //     new RetrieveAllEntitiesRequestExecutor(() => this._entities))
-            // 
+            //
             //             .AddPipelineSimulation()
-            // 
+            //
             //             // Use* -> Defines pipeline sequence
             //             .UsePipelineSimulation()
             //             .UseCrud()
             //             .UseMessages()
-            // 
+            //
             //             .SetLicense(FakeXrmEasyLicense.RPL_1_5)
             //             .Build();
 
