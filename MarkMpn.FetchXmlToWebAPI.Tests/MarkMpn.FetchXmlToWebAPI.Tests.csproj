@@ -13,8 +13,6 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <NoWarn>$(NoWarn);1701;1702;8981;CS1591;YSLIB0044</NoWarn>
-    <OutputType>Exe</OutputType>
-    <BaseOutputPath>$(SolutionDir).build\obj\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</BaseOutputPath>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <WarningLevel>9999</WarningLevel>
@@ -25,28 +23,27 @@
   <ItemGroup>
     <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="3.4.0" />
     <PackageReference Include="FakeXrmEasy.Core.v9" Version="3.4.2" />
-    <PackageReference Include="FakeXrmEasy.Messages.v9" Version="3.4.0" />
-    <PackageReference Include="FakeXrmEasy.Plugins.v9" Version="3.4.1" />
+    <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
+    <PackageReference Include="Microsoft.CodeCoverage" Version="17.9.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.24" />
+    <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="17.9.0" />
     <PackageReference Include="MSTest" Version="3.2.2" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.2.2" />
     <PackageReference Include="MSTest.TestFramework" Version="3.2.2" />
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.0" />
-    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+    <PackageReference Include="System.Linq" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="obj\**" />
+    <Compile Remove="obj/**" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Remove="obj\**" />
+    <EmbeddedResource Remove="obj/**" />
   </ItemGroup>
   <ItemGroup>
-    <Page Remove="obj\**" />
+    <Page Remove="obj/**" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="obj\**" />
+    <None Remove="obj/**" />
   </ItemGroup>
-  <Import Project="..\MarkMpn.FetchXmlToWebAPI\MarkMpn.FetchXmlToWebAPI.projitems" Label="Shared" />
+  <Import Project="../MarkMpn.FetchXmlToWebAPI/MarkMpn.FetchXmlToWebAPI.projitems" Label="Shared" />
 </Project>
