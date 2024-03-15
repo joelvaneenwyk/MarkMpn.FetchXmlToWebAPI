@@ -1,4 +1,4 @@
-﻿using Microsoft.Xrm.Sdk.Metadata;
+using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,7 +8,6 @@ using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
-using Xunit.Sdk;
 
 namespace MarkMpn.FetchXmlToWebAPI
 {
@@ -218,9 +217,7 @@ namespace MarkMpn.FetchXmlToWebAPI
                 throw new NotSupportedException("Skipping to subsequent pages is not supported in Web API. Load the first page and follow the @odata.nextLink URLs to get to subsequent pages");
             }
 
-            var entity = fetch.Items.FirstOrDefault(i => i is FetchEntityType) as FetchEntityType;
-
-            if (entity == null)
+            if (fetch.Items.FirstOrDefault(i => i is FetchEntityType) is not FetchEntityType entity)
             {
                 throw new NotSupportedException("Fetch must contain entity definition");
             }
@@ -286,6 +283,10 @@ namespace MarkMpn.FetchXmlToWebAPI
                 case AggregateType.min:
                 case AggregateType.sum:
                     return aggregate.ToString();
+                case AggregateType.count:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(aggregate), aggregate, null);
             }
 
             throw new NotSupportedException("Unknown aggregate type " + aggregate);
@@ -386,7 +387,7 @@ namespace MarkMpn.FetchXmlToWebAPI
 
             foreach (FetchAttributeType attributeitem in attributeitems)
             {
-                var attrMeta = entityMeta.Attributes.SingleOrDefault(a => a.LogicalName == attributeitem.name);
+                var attrMeta = entityMeta.Attributes.FirstOrDefault(a => a.LogicalName == attributeitem.name);
 
                 if (attrMeta == null)
                     throw new NotSupportedException($"Unknown attribute {entityName}.{attributeitem.name}");
@@ -471,7 +472,7 @@ namespace MarkMpn.FetchXmlToWebAPI
                 }
 
                 var entity = _metadata.GetEntity(entityName);
-                var attrMeta = entity.Attributes.SingleOrDefault(a => a.LogicalName == condition.attribute);
+                var attrMeta = entity.Attributes.FirstOrDefault(a => a.LogicalName == condition.attribute);
                 if (attrMeta == null)
                 {
                     throw new NotSupportedException($"No metadata for attribute: {entityName}.{condition.attribute}");
@@ -512,10 +513,10 @@ namespace MarkMpn.FetchXmlToWebAPI
                     case @operator.notlike:
                         var hasInitialWildcard = value.StartsWith('%');
                         if (hasInitialWildcard)
-                            value = value.Substring(1);
+                            value = value[1..];
                         var hasTerminalWildcard = value.EndsWith('%');
                         if (hasTerminalWildcard)
-                            value = value.Substring(0, value.Length - 1);
+                            value = value[..^1];
 
                         if (!AreAllLikeWildcardsEscaped(value))
                             throw new NotSupportedException("OData queries do not support complex LIKE wildcards. Only % at the start or end of the value is supported");
@@ -1038,9 +1039,8 @@ namespace MarkMpn.FetchXmlToWebAPI
             if (!string.IsNullOrEmpty(orderitem.alias))
                 throw new NotSupportedException($"OData queries do not support ordering on link entities. Please remove the sort on {orderitem.alias}.{orderitem.attribute}");
 
-            var attrMetadata = _metadata.GetEntity(entityName).Attributes.SingleOrDefault(a => a.LogicalName == orderitem.attribute);
-            if (attrMetadata == null)
-                throw new NotSupportedException($"No metadata for attribute {entityName}.{orderitem.attribute}");
+            var attrMetadata = _metadata.GetEntity(entityName).Attributes.FirstOrDefault(a => a.LogicalName == orderitem.attribute)
+                ?? throw new NotSupportedException($"No metadata for attribute {entityName}.{orderitem.attribute}");
 
             var odata = new OrderOData
             {
