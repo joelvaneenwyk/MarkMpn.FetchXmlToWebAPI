@@ -19,7 +19,7 @@ jobs:
         config: [Debug, Release]
 
     runs-on: ${{ matrix.os }}
-    name: ${{ matrix.config }} [${{ matrix.framework }}]
+    name: ${{ matrix.os }} [${{ matrix.config }}]
 
     steps:
       - uses: actions/checkout@v4
