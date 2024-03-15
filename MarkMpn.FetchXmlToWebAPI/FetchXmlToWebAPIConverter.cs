@@ -167,32 +167,39 @@ namespace MarkMpn.FetchXmlToWebAPI
         /// Converts a FetchXML query to Web API format
         /// </summary>
         /// <param name="fetch">The FetchXML query to convert</param>
-        /// <param name="preferHeader">The value to set the Prefer header to</param>
+        /// <param name="preferHeaders">The value to set the Prefer header to</param>
         /// <returns>The equivalent Web API format query</returns>
-        public string ConvertFetchXmlToWebAPI(string fetch, out string[] preferHeaders)
+        [PublicAPI]
+        public string? ConvertFetchXmlToWebAPI(string fetch, out string[]? preferHeaders)
         {
             if (!_metadata.IsConnected)
             {
                 throw new InvalidOperationException("Must have an active connection to CRM to compose OData query.");
             }
 
-            using (var reader = new StringReader(fetch))
+            EntityOData? converted = null;
+            string? url = null;
+            using StringReader reader = new(fetch);
+            XmlSerializer serializer = new(typeof(FetchType));
+            try
             {
-                var serializer = new XmlSerializer(typeof(FetchType));
-                var parsed = (FetchType)serializer.Deserialize(reader);
+                if (serializer.Deserialize(XmlReader.Create(reader)) is FetchType parsed)
+                {
+                    converted = ConvertOData(parsed);
+                    url = _orgUrl + converted;
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException("Error parsing FetchXML", ex);
+            }
 
-                var converted = ConvertOData(parsed);
-
-                var url = _orgUrl + converted;
-
-                if (converted.PageSize != null)
-                    preferHeaders = new[] { $"odata.maxpagesize={converted.PageSize}" };
-                else
-                    preferHeaders = null;
+            preferHeaders = converted?.PageSize != null
+                ? new[] { $"odata.maxpagesize={converted.PageSize}" }
+                : null;
 
                 return url;
             }
-        }
 
         private EntityOData ConvertOData(FetchType fetch)
         {
