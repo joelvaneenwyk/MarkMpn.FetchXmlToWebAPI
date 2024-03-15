@@ -39,7 +39,7 @@ public class FakeXrmEasyTestsBase
         Service = Context.GetAsyncOrganizationService2();
     }
 
-    protected string ConvertFetchToOData(string fetch) =>
+    protected string? ConvertFetchToOData(string fetch) =>
         _entities.Value.Convert(fetch, Context);
 }
 
@@ -224,7 +224,7 @@ public sealed class FetchXmlConversionEntities
             112);
     }
 
-    public string Convert(
+    public string? Convert(
         string fetch,
         IXrmFakedContext context,
         string orgUrl = "https://example.crm.dynamics.com/api/data/v9.0")
