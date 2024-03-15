@@ -28,14 +28,14 @@ namespace MarkMpn.FetchXmlToWebAPI
 
             protected virtual IEnumerable<string> GetParts()
             {
-                if (Select.Any())
-                    yield return "$select=" + String.Join(",", Select);
+                if (Select.Count != 0)
+                    yield return "$select=" + string.Join(",", Select);
 
-                if (Expand.Any())
-                    yield return "$expand=" + String.Join(",", Expand.Select(e => $"{e.PropertyName}({e})"));
+                if (Expand.Count != 0)
+                    yield return "$expand=" + string.Join(",", Expand.Select(e => $"{e.PropertyName}({e})"));
 
-                if (Filter.Any())
-                    yield return "$filter=" + String.Join(" and ", Filter);
+                if (Filter.Count != 0)
+                    yield return "$filter=" + string.Join(" and ", Filter);
             }
 
             public override string ToString()
@@ -84,18 +84,18 @@ namespace MarkMpn.FetchXmlToWebAPI
 
             protected override IEnumerable<string> GetParts()
             {
-                if (Aggregates.Any())
+                if (Aggregates.Count != 0)
                 {
-                    var aggregate = $"aggregate({String.Join(",", Aggregates)})";
+                    var aggregate = $"aggregate({string.Join(",", Aggregates)})";
 
-                    if (Groups.Any())
+                    if (Groups.Count != 0)
                     {
-                        aggregate = $"groupby(({String.Join(",", Groups)}),{aggregate})";
+                        aggregate = $"groupby(({string.Join(",", Groups)}),{aggregate})";
                     }
 
-                    if (Filter.Any())
+                    if (Filter.Count != 0)
                     {
-                        aggregate = $"filter({String.Join(" and ", Filter)})/{aggregate}";
+                        aggregate = $"filter({string.Join(" and ", Filter)})/{aggregate}";
                     }
 
                     yield return "$apply=" + aggregate;
@@ -105,8 +105,8 @@ namespace MarkMpn.FetchXmlToWebAPI
                 foreach (var part in base.GetParts())
                     yield return part;
 
-                if (OrderBy.Any())
-                    yield return "$orderby=" + String.Join(",", OrderBy);
+                if (OrderBy.Count != 0)
+                    yield return "$orderby=" + string.Join(",", OrderBy);
 
                 if (Top != null)
                     yield return "$top=" + Top;
@@ -387,7 +387,7 @@ namespace MarkMpn.FetchXmlToWebAPI
         {
             return items
                 .OfType<filter>()
-                .Where(f => f.Items != null && f.Items.Any())
+                .Where(f => f.Items != null && f.Items.Length != 0)
                 .Select(f =>
                 {
                     var filterOData = new FilterOData { And = f.type == filterType.and };
