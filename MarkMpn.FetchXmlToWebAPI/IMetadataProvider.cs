@@ -20,7 +20,7 @@ namespace MarkMpn.FetchXmlToWebAPI
         /// <remarks>
         /// If the <paramref name="logicalName"/> is not valid, this method throws an exception
         /// </remarks>
-        EntityMetadata GetEntity(string logicalName);
+        EntityMetadata GetEntity(string? logicalName);
 
         /// <summary>
         /// Gets the metadata for an entity
@@ -30,6 +30,6 @@ namespace MarkMpn.FetchXmlToWebAPI
         /// <remarks>
         /// If the <paramref name="otc"/> is not valid, this method throws an exception
         /// </remarks>
-        EntityMetadata GetEntity(int otc);
+        EntityMetadata GetEntity(int? otc);
     }
 }

@@ -16,6 +16,7 @@ using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Metadata;
+using Newtonsoft.Json.Linq;
 using static System.Net.WebRequestMethods;
 
 namespace MarkMpn.FetchXmlToWebAPI.Tests;
@@ -35,6 +36,7 @@ public class FakeXrmEasyTestsBase
             .New()
             .AddCrud()
             .AddFakeMessageExecutors(Assembly.GetAssembly(typeof(AddListMembersListRequestExecutor)))
+            .AddFakeMessageExecutors(Assembly.GetAssembly(typeof(RetrieveAllEntitiesRequestExecutor)))
             .UseCrud()
             .UseMessages()
             .SetLicense(FakeXrmEasyLicense.RPL_1_5)
@@ -55,7 +57,7 @@ public sealed class FetchXmlConversionEntities
     private readonly Dictionary<string, AttributeMetadata[]> _attributes;
 
 
-    public Span<EntityMetadata> Entities => CollectionsMarshal.AsSpan(_entities);
+    public EntityMetadata[] Entities => _entities.ToArray();
 
     public FetchXmlConversionEntities()
     {
@@ -214,6 +216,18 @@ public sealed class FetchXmlConversionEntities
             }
         };
 
+        SetSealedProperty(
+            _attributes["webresource"].First(a => a.LogicalName == "iscustomizable"),
+            nameof(ManagedPropertyAttributeMetadata.ValueAttributeTypeCode),
+            AttributeTypeCode.Boolean);
+        SetRelationships(this._entities.ToArray(), this._relationships.ToArray());
+        SetAttributes(this._entities.ToArray(), _attributes);
+
+        var incidentEntityMetadata = this._entities.First(e => e.LogicalName == "incident");
+        SetSealedProperty(
+            incidentEntityMetadata,
+            nameof(EntityMetadata.ObjectTypeCode),
+            112);
     }
 
     public string Convert(
@@ -221,16 +235,7 @@ public sealed class FetchXmlConversionEntities
         IXrmFakedContext context,
         string orgUrl = "https://example.crm.dynamics.com/api/data/v9.0")
     {
-        SetSealedProperty(
-            _attributes["webresource"].First(a => a.LogicalName == "iscustomizable"),
-            nameof(ManagedPropertyAttributeMetadata.ValueAttributeTypeCode), AttributeTypeCode.Boolean);
-        SetRelationships(this._entities.ToArray(), this._relationships.ToArray());
-        SetAttributes(this._entities.ToArray(), _attributes);
-        SetSealedProperty(
-            this._entities.First(e => e.LogicalName == "incident"),
-            nameof(EntityMetadata.ObjectTypeCode), 112);
-
-        foreach (ref var entity in this.Entities)
+        foreach (var entity in this._entities)
             context.SetEntityMetadata(entity);
 
         var org = context.GetOrganizationService();
@@ -270,6 +275,10 @@ public sealed class FetchXmlConversionEntities
 
     private static void SetSealedProperty(object target, string name, object value)
     {
-        target.GetType().GetProperty(name)?.SetValue(target, value, null);
+        PropertyInfo prop = target.GetType().GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
+        if (prop != null && prop.CanWrite)
+        {
+            prop.SetValue(target, value, null);
+        }
     }
 }
