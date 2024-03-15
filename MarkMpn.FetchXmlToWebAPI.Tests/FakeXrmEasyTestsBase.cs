@@ -267,9 +267,9 @@ public sealed class FetchXmlConversionEntities
         }
     }
 
-    private static void SetSealedProperty(object target, string name, object value)
+    private static void SetSealedProperty(object? target, string name, object value)
     {
-        PropertyInfo prop = target.GetType().GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
+        PropertyInfo? prop = target?.GetType()?.GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
         if (prop != null && prop.CanWrite)
         {
             prop.SetValue(target, value, null);
