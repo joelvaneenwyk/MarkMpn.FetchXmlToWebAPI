@@ -33,8 +33,6 @@
 		<PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="3.4.0" />
 		<PackageReference Include="FakeXrmEasy.Core.v9" Version="3.4.2" />
 		<PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
-		<PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.39" />
-		<PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.2.0" />
 		<PackageReference Include="Microsoft.CodeCoverage" Version="17.9.0" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
 		<PackageReference Include="Microsoft.TestPlatform.TestHost" Version="17.9.0" />
@@ -53,13 +51,8 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
 		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.1.17" />
-		<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.1.0" />
 		<PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.17.2" />
-		<PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.21.0" />
-		<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore"
-            Version="1.2.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Remove="obj/**" />
