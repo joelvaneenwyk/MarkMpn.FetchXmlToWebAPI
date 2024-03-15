@@ -351,11 +351,16 @@ namespace MarkMpn.FetchXmlToWebAPI
 
         private IEnumerable<LinkEntityOData> ConvertJoins(string entityName, object[] items, object[] rootEntityItems)
         {
-            foreach (var linkEntity in items.OfType<FetchLinkEntityType>().Where(l => l.Items != null && l.Items.Length > 0))
+            foreach (var linkEntity in items
+                         .OfType<FetchLinkEntityType>()
+                         .Where(l => l.Items != null && l.Items.Length > 0))
             {
                 var currentLinkEntity = linkEntity;
-                var expand = new LinkEntityOData();
-                expand.PropertyName = LinkItemToNavigationProperty(entityName, currentLinkEntity, out var child, out var manyToManyNextLink);
+                LinkEntityOData expand = new()
+                {
+                    PropertyName = LinkItemToNavigationProperty(
+                        entityName, currentLinkEntity, out var child, out var manyToManyNextLink)
+                };
                 currentLinkEntity = manyToManyNextLink ?? currentLinkEntity;
                 expand.Select.AddRange(ConvertSelect(currentLinkEntity.name, currentLinkEntity.Items));
 
@@ -387,10 +392,10 @@ namespace MarkMpn.FetchXmlToWebAPI
 
             foreach (FetchAttributeType attributeitem in attributeitems)
             {
-                var attrMeta = entityMeta.Attributes.FirstOrDefault(a => a.LogicalName == attributeitem.name);
-
-                if (attrMeta == null)
-                    throw new NotSupportedException($"Unknown attribute {entityName}.{attributeitem.name}");
+                var attrMeta = entityMeta
+                    .Attributes
+                    .FirstOrDefault(a => a.LogicalName == attributeitem.name)
+                    ?? throw new NotSupportedException($"Unknown attribute {entityName}.{attributeitem.name}");
 
                 yield return GetPropertyName(attrMeta);
             }
@@ -424,12 +429,11 @@ namespace MarkMpn.FetchXmlToWebAPI
             {
                 if (!string.IsNullOrEmpty(condition.entityname))
                 {
-                    var linkEntity = FindLinkEntity(entityName, rootEntityItems, condition.entityname, "", out navigationProperty, out var child);
-
-                    if (linkEntity == null)
-                    {
-                        throw new NotSupportedException($"Cannot find filter entity " + condition.entityname);
-                    }
+                    var linkEntity = (
+                        FindLinkEntity(entityName, rootEntityItems, condition.entityname, "", out navigationProperty,
+                            out var child)
+                        ?? throw new NotSupportedException($"Cannot find filter entity " + condition.entityname)
+                    );
 
                     if (child)
                     {
@@ -472,11 +476,9 @@ namespace MarkMpn.FetchXmlToWebAPI
                 }
 
                 var entity = _metadata.GetEntity(entityName);
-                var attrMeta = entity.Attributes.FirstOrDefault(a => a.LogicalName == condition.attribute);
-                if (attrMeta == null)
-                {
-                    throw new NotSupportedException($"No metadata for attribute: {entityName}.{condition.attribute}");
-                }
+                var attrMeta = entity
+                    .Attributes.FirstOrDefault(a => a.LogicalName == condition.attribute)
+                    ?? throw new NotSupportedException($"No metadata for attribute: {entityName}.{condition.attribute}");
 
                 result = navigationProperty + GetPropertyName(attrMeta);
 
@@ -1004,7 +1006,7 @@ namespace MarkMpn.FetchXmlToWebAPI
         private static string FormatValue(Type type, string s, CultureInfo? cultureInfo = null)
         {
             var culture = cultureInfo ?? CultureInfo.CurrentCulture;
-            
+
             if (type == typeof(string))
                 return "'" + HttpUtility.UrlEncode(s.Replace("'", "''")) + "'";
 
@@ -1039,7 +1041,10 @@ namespace MarkMpn.FetchXmlToWebAPI
             if (!string.IsNullOrEmpty(orderitem.alias))
                 throw new NotSupportedException($"OData queries do not support ordering on link entities. Please remove the sort on {orderitem.alias}.{orderitem.attribute}");
 
-            var attrMetadata = _metadata.GetEntity(entityName).Attributes.FirstOrDefault(a => a.LogicalName == orderitem.attribute)
+            var attrMetadata = _metadata
+                                   .GetEntity(entityName)
+                                   .Attributes
+                                   .FirstOrDefault(a => a.LogicalName == orderitem.attribute)
                 ?? throw new NotSupportedException($"No metadata for attribute {entityName}.{orderitem.attribute}");
 
             var odata = new OrderOData
