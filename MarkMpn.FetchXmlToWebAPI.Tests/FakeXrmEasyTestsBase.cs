@@ -23,7 +23,7 @@ public class FakeXrmEasyTestsBase
 
     protected readonly IXrmFakedContext Context;
     protected readonly IOrganizationServiceAsync2 Service;
-    
+
     protected FakeXrmEasyTestsBase()
     {
         Context = MiddlewareBuilder
