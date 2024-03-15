@@ -995,28 +995,29 @@ namespace MarkMpn.FetchXmlToWebAPI
             return attr.LogicalName;
         }
 
-        private static string FormatValue(Type type, string s)
+        private static string FormatValue(Type type, string s, CultureInfo? cultureInfo = null)
         {
+            var culture = cultureInfo ?? CultureInfo.CurrentCulture;
+            
             if (type == typeof(string))
                 return "'" + HttpUtility.UrlEncode(s.Replace("'", "''")) + "'";
 
             if (type == typeof(DateTime))
             {
-                var date = DateTimeOffset.Parse(s);
-                var datestr = string.Empty;
-                if (date.Equals(date.Date))
-                    return date.ToString("yyyy-MM-dd");
-                else
-                    return date.ToString("u").Replace(' ', 'T');
+                var date = DateTimeOffset.Parse(s, culture);
+                return date.Equals(date.Date)
+                    ? date.ToString("yyyy-MM-dd", culture)
+                    : date.ToString("u").Replace(' ', 'T');
             }
 
             if (type == typeof(bool))
                 return s == "1" ? "true" : "false";
 
             if (type == typeof(Guid))
-                return "'" + Guid.Parse(s).ToString() + "'";
+                return $"'{Guid.Parse(s)}'";
 
-            return HttpUtility.UrlEncode(Convert.ChangeType(s, type).ToString());
+            return HttpUtility.UrlEncode(Convert.ChangeType(s, type, culture).ToString())
+                   ?? string.Empty;
         }
 
         private IEnumerable<OrderOData> ConvertOrder(string entityName, object[] items)
