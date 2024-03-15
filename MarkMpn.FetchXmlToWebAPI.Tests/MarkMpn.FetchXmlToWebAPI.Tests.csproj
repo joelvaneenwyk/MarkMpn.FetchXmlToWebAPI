@@ -6,7 +6,6 @@
         <AssemblyName>MarkMpn.FetchXmlToWebAPI.Tests</AssemblyName>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
         <PackageTags>dataverse;linqpaddriver;commondataservice;powerapps;dynamics365</PackageTags>
-        <VersionPrefix>1.7.5</VersionPrefix>
         <Authors>Natraj Yegnaraman, Joel Van Eenwyk</Authors>
         <Company>Natraj Yegnaraman</Company>
         <RootNamespace>MarkMpn.FetchXmlToWebAPI.Tests</RootNamespace>
