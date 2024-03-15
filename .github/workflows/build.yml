@@ -14,7 +14,7 @@ jobs:
       matrix:
         dotnet: [8.x]
         framework: [net6.0]
-        os: [windows-latest]
+        os: [ubuntu-latest, windows-latest]
         platform: [Any CPU]
         config: [Debug, Release]
 
@@ -43,20 +43,29 @@ jobs:
         run: >
           dotnet build
           --no-restore
-          --graph
           --configuration "${{ matrix.config }}"
           -p:Platform="${{ matrix.platform }}"
           --framework "${{ matrix.framework }}"
           --verbosity normal
+          --graph
 
       - name: Test
         run: >
           dotnet test
           --no-build
           --no-restore
-          --verbosity normal
           --configuration "${{ matrix.config }}"
+          -p:Platform="${{ matrix.platform }}"
           --framework "${{ matrix.framework }}"
+          --verbosity normal
           --collect:"XPlat Code Coverage"
-          --results-directory:.build/TestResults
+          --results-directory:./TestResults
           --logger:trx
+
+      - uses: bibipkins/dotnet-test-reporter@v1.4.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment-title: 'Unit Test Results'
+          results-path: ./TestResults/*.trx
+          #coverage-path: ./TestResults/coverage.xml
+          #coverage-threshold: 80

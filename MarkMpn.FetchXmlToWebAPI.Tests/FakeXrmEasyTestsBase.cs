@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Threading;
-using System.Xml.Linq;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.FakeMessageExecutors;
@@ -16,8 +12,6 @@ using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Metadata;
-using Newtonsoft.Json.Linq;
-using static System.Net.WebRequestMethods;
 
 namespace MarkMpn.FetchXmlToWebAPI.Tests;
 
@@ -29,7 +23,7 @@ public class FakeXrmEasyTestsBase
 
     protected readonly IXrmFakedContext Context;
     protected readonly IOrganizationServiceAsync2 Service;
-    
+
     protected FakeXrmEasyTestsBase()
     {
         Context = MiddlewareBuilder
@@ -45,7 +39,7 @@ public class FakeXrmEasyTestsBase
         Service = Context.GetAsyncOrganizationService2();
     }
 
-    protected string ConvertFetchToOData(string fetch) =>
+    protected string? ConvertFetchToOData(string fetch) =>
         _entities.Value.Convert(fetch, Context);
 }
 
@@ -230,7 +224,7 @@ public sealed class FetchXmlConversionEntities
             112);
     }
 
-    public string Convert(
+    public string? Convert(
         string fetch,
         IXrmFakedContext context,
         string orgUrl = "https://example.crm.dynamics.com/api/data/v9.0")
@@ -273,9 +267,9 @@ public sealed class FetchXmlConversionEntities
         }
     }
 
-    private static void SetSealedProperty(object target, string name, object value)
+    private static void SetSealedProperty(object? target, string name, object value)
     {
-        PropertyInfo prop = target.GetType().GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
+        PropertyInfo? prop = target?.GetType()?.GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
         if (prop != null && prop.CanWrite)
         {
             prop.SetValue(target, value, null);
