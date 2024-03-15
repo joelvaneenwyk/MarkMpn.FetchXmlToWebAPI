@@ -17,17 +17,17 @@ namespace MarkMpn.FetchXmlToWebAPI
     /// </summary>
     public class FetchXmlToWebAPIConverter
     {
-        class LinkEntityOData
+        private class LinkEntityOData
         {
             protected virtual string Separator => ";";
 
             public string? PropertyName { get; set; }
 
-            public List<string> Select { get; } = new List<string>();
+            public List<string> Select { get; } = new();
 
-            public List<LinkEntityOData> Expand { get; } = new List<LinkEntityOData>();
+            public List<LinkEntityOData> Expand { get; } = new();
 
-            public List<FilterOData> Filter { get; } = new List<FilterOData>();
+            public List<FilterOData> Filter { get; } = new();
 
             protected virtual IEnumerable<string> GetParts()
             {
@@ -47,13 +47,13 @@ namespace MarkMpn.FetchXmlToWebAPI
             }
         }
 
-        class FilterOData
+        private sealed class FilterOData
         {
-            public bool And { get; set; }
+            public bool And { get; init; }
 
-            public List<string> Conditions { get; } = new List<string>();
+            public List<string> Conditions { get; } = new();
 
-            public List<FilterOData> Filters { get; } = new List<FilterOData>();
+            public List<FilterOData> Filters { get; } = new();
 
             public override string? ToString()
             {
@@ -71,17 +71,17 @@ namespace MarkMpn.FetchXmlToWebAPI
             }
         }
 
-        class EntityOData : LinkEntityOData
+        private sealed class EntityOData : LinkEntityOData
         {
             public int? Top { get; set; }
 
-            public int? PageSize { get; set; }
+            public int? PageSize { get; init; }
 
-            public List<OrderOData> OrderBy { get; } = new List<OrderOData>();
+            public List<OrderOData> OrderBy { get; } = new();
 
-            public List<string> Groups { get; } = new List<string>();
+            public List<string> Groups { get; } = new();
 
-            public List<string> Aggregates { get; } = new List<string>();
+            public List<string> Aggregates { get; } = new();
 
             protected override string Separator => "&";
 
@@ -123,11 +123,11 @@ namespace MarkMpn.FetchXmlToWebAPI
             }
         }
 
-        class OrderOData
+        private sealed class OrderOData
         {
-            public string? PropertyName { get; set; }
+            public string? PropertyName { get; init; }
 
-            public bool Descending { get; set; }
+            public bool Descending { get; init; }
 
             public override string ToString()
             {
@@ -154,7 +154,7 @@ namespace MarkMpn.FetchXmlToWebAPI
         /// </summary>
         /// <param name="fetch">The FetchXML query to convert</param>
         /// <returns>The equivalent Web API format query</returns>
-        public string ConvertFetchXmlToWebAPI(string fetch)
+        public string? ConvertFetchXmlToWebAPI(string fetch)
         {
             var url = ConvertFetchXmlToWebAPI(fetch, out var preferHeaders);
 
@@ -218,19 +218,21 @@ namespace MarkMpn.FetchXmlToWebAPI
                 throw new NotSupportedException("Skipping to subsequent pages is not supported in Web API. Load the first page and follow the @odata.nextLink URLs to get to subsequent pages");
             }
 
-            var entity = fetch.Items.Where(i => i is FetchEntityType).FirstOrDefault() as FetchEntityType;
+            var entity = fetch.Items.FirstOrDefault(i => i is FetchEntityType) as FetchEntityType;
 
             if (entity == null)
             {
                 throw new NotSupportedException("Fetch must contain entity definition");
             }
 
-            var odata = new EntityOData();
-            odata.PropertyName = LogicalToCollectionName(entity.name);
+            EntityOData odata = new()
+            {
+                PropertyName = LogicalToCollectionName(entity.name)
+            };
 
             if (!string.IsNullOrEmpty(fetch.top))
             {
-                odata.Top = int.Parse(fetch.top);
+                odata.Top = int.Parse(fetch.top, CultureInfo.InvariantCulture);
             }
 
             if (entity.Items == null)
@@ -482,7 +484,7 @@ namespace MarkMpn.FetchXmlToWebAPI
                     result += "/Value";
                 }
 
-                string function = null;
+                string? function = null;
                 var functionParameters = 1;
                 var functionParameterType = typeof(string);
                 var value = condition.value;
@@ -843,7 +845,7 @@ namespace MarkMpn.FetchXmlToWebAPI
                         return $"{navigationProperty}Microsoft.Dynamics.CRM.{HttpUtility.UrlEncode(function)}(PropertyName='{HttpUtility.UrlEncode(attrMeta.LogicalName)}',{string.Join(",", condition.Items.Select((i, idx) => $"Property{idx + 1}={FormatValue(functionParameterType, i.Value)}"))})";
                 }
 
-                if (!string.IsNullOrEmpty(value) && !result.Contains("("))
+                if (!string.IsNullOrEmpty(value) && !result.Contains('('))
                 {
                     var valueType = typeof(string);
                     var typeCode = attrMeta.AttributeType;
@@ -906,7 +908,7 @@ namespace MarkMpn.FetchXmlToWebAPI
             return result;
         }
 
-        private bool AreAllLikeWildcardsEscaped(string value)
+        private static bool AreAllLikeWildcardsEscaped(string value)
         {
             var bracketStart = -1;
 
@@ -953,7 +955,7 @@ namespace MarkMpn.FetchXmlToWebAPI
             return true;
         }
 
-        private string UnescapeLikeWildcards(string value)
+        private static string UnescapeLikeWildcards(string value)
         {
             return value
                 .Replace("[_]", "_")
@@ -961,7 +963,7 @@ namespace MarkMpn.FetchXmlToWebAPI
                 .Replace("[[]", "[");
         }
 
-        private FetchLinkEntityType FindLinkEntity(string entityName, object[] items, string alias, string path, out string navigationProperty, out bool child)
+        private FetchLinkEntityType? FindLinkEntity(string entityName, object[] items, string alias, string path, out string navigationProperty, out bool child)
         {
             child = false;
             navigationProperty = path;
@@ -1055,7 +1057,7 @@ namespace MarkMpn.FetchXmlToWebAPI
             return entityMeta.EntitySetName ?? entityMeta.LogicalCollectionName;
         }
 
-        private string LinkItemToNavigationProperty(string entityname, FetchLinkEntityType linkitem, out bool child, out FetchLinkEntityType manyToManyNextLink)
+        private string LinkItemToNavigationProperty(string entityname, FetchLinkEntityType linkitem, out bool child, out FetchLinkEntityType? manyToManyNextLink)
         {
             manyToManyNextLink = null;
             var entity = _metadata.GetEntity(entityname);
