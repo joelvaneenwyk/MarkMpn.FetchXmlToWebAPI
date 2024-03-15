@@ -498,10 +498,10 @@ namespace MarkMpn.FetchXmlToWebAPI
                         break;
                     case @operator.like:
                     case @operator.notlike:
-                        var hasInitialWildcard = value.StartsWith("%");
+                        var hasInitialWildcard = value.StartsWith('%');
                         if (hasInitialWildcard)
                             value = value.Substring(1);
-                        var hasTerminalWildcard = value.EndsWith("%");
+                        var hasTerminalWildcard = value.EndsWith('%');
                         if (hasTerminalWildcard)
                             value = value.Substring(0, value.Length - 1);
 
