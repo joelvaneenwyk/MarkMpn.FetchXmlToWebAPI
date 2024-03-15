@@ -59,5 +59,13 @@ jobs:
           --framework "${{ matrix.framework }}"
           --verbosity normal
           --collect:"XPlat Code Coverage"
-          --results-directory:.build/TestResults
+          --results-directory:./TestResults
           --logger:trx
+
+      - uses: bibipkins/dotnet-test-reporter@v1.4.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment-title: 'Unit Test Results'
+          results-path: ./TestResults/*.trx
+          coverage-path: ./TestResults/coverage.xml
+          coverage-threshold: 80
