@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Threading;
-using System.Xml.Linq;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.FakeMessageExecutors;
@@ -16,8 +12,6 @@ using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Metadata;
-using Newtonsoft.Json.Linq;
-using static System.Net.WebRequestMethods;
 
 namespace MarkMpn.FetchXmlToWebAPI.Tests;
 
