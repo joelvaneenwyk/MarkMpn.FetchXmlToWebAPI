@@ -1,12 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
+        <SelfContained>false</SelfContained>
+        <TargetFramework>net6.0</TargetFramework>
         <AssemblyName>MarkMpn.FetchXmlToWebAPI.Tests</AssemblyName>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
         <PackageTags>dataverse;linqpaddriver;commondataservice;powerapps;dynamics365</PackageTags>
         <VersionPrefix>1.7.5</VersionPrefix>
         <Authors>Natraj Yegnaraman, Joel Van Eenwyk</Authors>
         <Company>Natraj Yegnaraman</Company>
+        <AzureFunctionsVersion>v4</AzureFunctionsVersion>
         <RootNamespace>MarkMpn.FetchXmlToWebAPI.Tests</RootNamespace>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryType>git</RepositoryType>
@@ -21,18 +23,42 @@
         <Title>$(AssemblyName)</Title>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="3.4.0" />
         <PackageReference Include="FakeXrmEasy.Core.v9" Version="3.4.2" />
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
+        <PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.39" />
+        <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.2.0" />
         <PackageReference Include="Microsoft.CodeCoverage" Version="17.9.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-        <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="3.0.3" />
         <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="17.9.0" />
         <PackageReference Include="MSTest" Version="3.2.2" />
         <PackageReference Include="MSTest.TestAdapter" Version="3.2.2" />
         <PackageReference Include="MSTest.TestFramework" Version="3.2.2" />
         <PackageReference Include="System.Linq" Version="4.3.0" />
+        <PackageReference Include="FakeXrmEasy.Plugins.v9" Version="3.4.1" />
+        <PackageReference Include="FakeXrmEasy.Messages.v9" Version="3.4.0" />
+        <PackageReference Include="xunit" Version="2.7.0" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.7">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.collector" Version="6.0.2">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
+        <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.1.17" />
+        <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.1.0" />
+        <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.17.2" />
+        <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.21.0" />
+        <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="1.2.1" />
     </ItemGroup>
     <ItemGroup>
         <Compile Remove="obj/**" />

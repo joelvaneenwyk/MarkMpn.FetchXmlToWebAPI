@@ -1,59 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Abstractions.Enums;
-using FakeXrmEasy.Middleware;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using System.Runtime.InteropServices;
-using JetBrains.Annotations;
 
 namespace MarkMpn.FetchXmlToWebAPI.Tests
 {
     [TestClass]
-    public class FetchXmlConversionTests
+    public class FetchXmlConversionTests : FakeXrmEasyTestsBase
     {
-        [UsedImplicitly]
-#pragma warning disable IDE0052
-        private readonly IOrganizationService _service;
-#pragma warning restore IDE0052
 
-        private readonly IXrmFakedContext _context;
 
-        private readonly List<OneToManyRelationshipMetadata> _relationships = new();
-        private readonly List<EntityMetadata> _entities = new();
 
-        private Span<EntityMetadata> Entities => CollectionsMarshal.AsSpan(this._entities);
 
-        public FetchXmlConversionTests()
-        {
-            _context = XrmFakedContextFactory.New(FakeXrmEasyLicense.RPL_1_5);
-
-            // _context = MiddlewareBuilder
-            //             .New()
-            //
-            //             // Add* -> Middleware configuration
-            //             .AddCrud()
-            //             .AddFakeMessageExecutors()
-            //             .AddGenericFakeMessageExecutors()
-            //
-            //             // .AddFakeMessageExecutor<RetrieveAllEntitiesRequest>(
-            //             //     new RetrieveAllEntitiesRequestExecutor(() => this._entities))
-            //
-            //             .AddPipelineSimulation()
-            //
-            //             // Use* -> Defines pipeline sequence
-            //             .UsePipelineSimulation()
-            //             .UseCrud()
-            //             .UseMessages()
-            //
-            //             .SetLicense(FakeXrmEasyLicense.RPL_1_5)
-            //             .Build();
-
-            _service = _context.GetOrganizationService();
-        }
 
         [TestMethod]
         public void SimpleQuery()
@@ -85,7 +45,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)",
+                odata);
         }
 
         [TestMethod]
@@ -103,7 +65,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname)", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname)",
+                odata);
         }
 
         [TestMethod]
@@ -121,7 +85,8 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(name eq 'FXB')", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(name eq 'FXB')", odata);
         }
 
         [TestMethod]
@@ -143,7 +108,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(name eq 'FXB' and (websiteurl eq 'xrmtoolbox.com' or websiteurl eq 'fetchxmlbuilder.com'))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(name eq 'FXB' and (websiteurl eq 'xrmtoolbox.com' or websiteurl eq 'fetchxmlbuilder.com'))",
+                odata);
         }
 
         [TestMethod]
@@ -159,7 +126,8 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$orderby=name asc", odata);
+            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$orderby=name asc",
+                odata);
         }
 
         [TestMethod]
@@ -190,7 +158,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$apply=groupby((name),aggregate($count as count))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$apply=groupby((name),aggregate($count as count))",
+                odata);
         }
 
         [TestMethod]
@@ -206,7 +176,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$apply=groupby((name),aggregate(websiteurl with max as maxwebsite))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$apply=groupby((name),aggregate(websiteurl with max as maxwebsite))",
+                odata);
         }
 
         [TestMethod]
@@ -224,7 +196,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)&$filter=(primarycontactid/contactid ne null)", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)&$filter=(primarycontactid/contactid ne null)",
+                odata);
         }
 
         [TestMethod]
@@ -245,7 +219,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)&$filter=(primarycontactid/firstname eq 'Mark')", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)&$filter=(primarycontactid/firstname eq 'Mark')",
+                odata);
         }
 
         [TestMethod]
@@ -266,7 +242,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)&$filter=(primarycontactid/Microsoft.Dynamics.CRM.On(PropertyName='createdon',PropertyValue='2020-01-01'))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=primarycontactid($select=firstname)&$filter=(primarycontactid/Microsoft.Dynamics.CRM.On(PropertyName='createdon',PropertyValue='2020-01-01'))",
+                odata);
         }
 
         [TestMethod]
@@ -284,7 +262,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname)&$filter=(contact_customer_accounts/any(o1:(o1/contactid ne null)))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname)&$filter=(contact_customer_accounts/any(o1:(o1/contactid ne null)))",
+                odata);
         }
 
         [TestMethod]
@@ -305,7 +285,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname;$filter=(firstname eq 'Mark'))&$filter=(contact_customer_accounts/any(o1:(o1/firstname eq 'Mark')))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname;$filter=(firstname eq 'Mark'))&$filter=(contact_customer_accounts/any(o1:(o1/firstname eq 'Mark')))",
+                odata);
         }
 
         [TestMethod]
@@ -326,7 +308,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname;$filter=(Microsoft.Dynamics.CRM.On(PropertyName='createdon',PropertyValue='2020-01-01')))&$filter=(contact_customer_accounts/any(o1:(o1/Microsoft.Dynamics.CRM.On(PropertyName='createdon',PropertyValue='2020-01-01'))))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname;$filter=(Microsoft.Dynamics.CRM.On(PropertyName='createdon',PropertyValue='2020-01-01')))&$filter=(contact_customer_accounts/any(o1:(o1/Microsoft.Dynamics.CRM.On(PropertyName='createdon',PropertyValue='2020-01-01'))))",
+                odata);
         }
 
         [TestMethod]
@@ -344,7 +328,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(startswith(name, 'FXB'))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(startswith(name, 'FXB'))",
+                odata);
         }
 
         [TestMethod]
@@ -365,7 +351,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname;$filter=(startswith(firstname, 'FXB')))&$filter=(contact_customer_accounts/any(o1:(startswith(o1%2ffirstname, 'FXB'))))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname;$filter=(startswith(firstname, 'FXB')))&$filter=(contact_customer_accounts/any(o1:(startswith(o1%2ffirstname, 'FXB'))))",
+                odata);
         }
 
         [TestMethod]
@@ -383,7 +371,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(endswith(name, 'FXB'))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(endswith(name, 'FXB'))",
+                odata);
         }
 
         [TestMethod]
@@ -401,7 +391,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(contains(name, 'FXB'))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(contains(name, 'FXB'))",
+                odata);
         }
 
         [TestMethod]
@@ -419,7 +411,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(startswith(name, '%5bFXB'))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(startswith(name, '%5bFXB'))",
+                odata);
         }
 
         [TestMethod]
@@ -456,7 +450,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/stringmaps?$select=attributevalue,attributename,value&$filter=(attributename eq 'prioritycode' and objecttypecode eq 'incident')", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/stringmaps?$select=attributevalue,attributename,value&$filter=(attributename eq 'prioritycode' and objecttypecode eq 'incident')",
+                odata);
         }
 
         [TestMethod]
@@ -474,7 +470,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/connections?$select=connectionid&$filter=(record1objecttypecode eq 8)", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/connections?$select=connectionid&$filter=(record1objecttypecode eq 8)",
+                odata);
         }
 
         [TestMethod]
@@ -493,7 +491,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/webresourceset?$select=name,iscustomizable&$filter=(iscustomizable/Value eq true)", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/webresourceset?$select=name,iscustomizable&$filter=(iscustomizable/Value eq true)",
+                odata);
         }
 
         [TestMethod]
@@ -537,7 +537,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(accountid eq '3fee3d59-68c9-ed11-b597-0022489b41c4')", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(accountid eq '3fee3d59-68c9-ed11-b597-0022489b41c4')",
+                odata);
         }
 
         [TestMethod]
@@ -554,7 +556,9 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
             var odata = ConvertFetchToOData(fetch);
 
-            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(contact_customer_accounts/any(o1:(o1/contactid ne null)))", odata);
+            Assert.AreEqual(
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(contact_customer_accounts/any(o1:(o1/contactid ne null)))",
+                odata);
         }
 
         [TestMethod]
@@ -588,210 +592,212 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
             Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts", odata);
         }
 
-        private string ConvertFetchToOData(string fetch)
-        {
-            // Add basic metadata
-            this._relationships.AddRange(new[]
-            {
-                new OneToManyRelationshipMetadata
-                {
-                    SchemaName = "contact_customer_accounts",
-                    ReferencedEntity = "account",
-                    ReferencedAttribute = "accountid",
-                    ReferencingEntity = "contact",
-                    ReferencingAttribute = "parentcustomerid"
-                },
-                new OneToManyRelationshipMetadata
-                {
-                    SchemaName = "account_primarycontact",
-                    ReferencedEntity = "contact",
-                    ReferencedAttribute = "contactid",
-                    ReferencingEntity = "account",
-                    ReferencingAttribute = "primarycontactid"
-                }
-            });
 
-            this._entities.AddRange(new[]
-            {
-                new EntityMetadata
-                {
-                    LogicalName = "account",
-                    EntitySetName = "accounts"
-                },
-                new EntityMetadata
-                {
-                    LogicalName = "contact",
-                    EntitySetName = "contacts"
-                },
-                new EntityMetadata
-                {
-                    LogicalName = "connection",
-                    EntitySetName = "connections"
-                },
-                new EntityMetadata
-                {
-                    LogicalName = "webresource",
-                    EntitySetName = "webresourceset"
-                },
-                new EntityMetadata
-                {
-                    LogicalName = "stringmap",
-                    EntitySetName = "stringmaps"
-                },
-                new EntityMetadata
-                {
-                    LogicalName = "incident",
-                    EntitySetName = "incidents"
-                }
-            });
 
-            var attributes = new Dictionary<string, AttributeMetadata[]>
-            {
-                ["account"] = new AttributeMetadata[]
-                {
-                    new UniqueIdentifierAttributeMetadata
-                    {
-                        LogicalName = "accountid"
-                    },
-                    new StringAttributeMetadata
-                    {
-                        LogicalName = "name"
-                    },
-                    new StringAttributeMetadata
-                    {
-                        LogicalName = "websiteurl"
-                    },
-                    new LookupAttributeMetadata
-                    {
-                        LogicalName = "primarycontactid",
-                        Targets = new[] { "contact" }
-                    }
-                },
-                ["contact"] = new AttributeMetadata[]
-                {
-                    new UniqueIdentifierAttributeMetadata
-                    {
-                        LogicalName = "contactid"
-                    },
-                    new StringAttributeMetadata
-                    {
-                        LogicalName = "firstname"
-                    },
-                    new LookupAttributeMetadata
-                    {
-                        LogicalName = "parentcustomerid",
-                        Targets = new[] { "account", "contact" }
-                    },
-                    new DateTimeAttributeMetadata
-                    {
-                        LogicalName = "createdon"
-                    }
-                },
-                ["connection"] = new AttributeMetadata[]
-                {
-                    new UniqueIdentifierAttributeMetadata
-                    {
-                        LogicalName = "connectionid"
-                    },
-                    new PicklistAttributeMetadata
-                    {
-                        LogicalName = "record1objecttypecode"
-                    }
-                },
-                ["incident"] = new AttributeMetadata[]
-                {
-                    new UniqueIdentifierAttributeMetadata
-                    {
-                        LogicalName = "incidentid"
-                    }
-                },
-                ["stringmap"] = new AttributeMetadata[]
-                {
-                    new UniqueIdentifierAttributeMetadata
-                    {
-                        LogicalName = "stringmapid"
-                    },
-                    new EntityNameAttributeMetadata
-                    {
-                        LogicalName = "objecttypecode"
-                    },
-                    new StringAttributeMetadata
-                    {
-                        LogicalName = "attributename"
-                    },
-                    new IntegerAttributeMetadata
-                    {
-                        LogicalName = "attributevalue"
-                    },
-                    new StringAttributeMetadata
-                    {
-                        LogicalName = "value"
-                    }
-                },
-                ["webresource"] = new AttributeMetadata[]
-                {
-                    new UniqueIdentifierAttributeMetadata
-                    {
-                        LogicalName = "webresourceid"
-                    },
-                    new StringAttributeMetadata
-                    {
-                        LogicalName = "name"
-                    },
-                    new ManagedPropertyAttributeMetadata
-                    {
-                        LogicalName = "iscustomizable"
-                    }
-                }
-            };
 
-            SetSealedProperty(
-                attributes["webresource"].First(a => a.LogicalName == "iscustomizable"),
-                nameof(ManagedPropertyAttributeMetadata.ValueAttributeTypeCode), AttributeTypeCode.Boolean);
-            FetchXmlConversionTests.SetRelationships(this._entities.ToArray(), this._relationships.ToArray());
-            FetchXmlConversionTests.SetAttributes(this._entities.ToArray(), attributes);
-            SetSealedProperty(
-                this._entities.First(e => e.LogicalName == "incident"),
-                nameof(EntityMetadata.ObjectTypeCode), 112);
 
-            foreach (ref var entity in this.Entities)
-                this._context.SetEntityMetadata(entity);
 
-            var org = this._context.GetOrganizationService();
-            var converter = new FetchXmlToWebAPIConverter(new MetadataProvider(org), $"https://example.crm.dynamics.com/api/data/v9.0");
-            return converter.ConvertFetchXmlToWebAPI(fetch);
-        }
 
-        private static void SetAttributes(EntityMetadata[] entities, Dictionary<string, AttributeMetadata[]> attributes)
-        {
-            foreach (var entity in entities)
-            {
-                SetSealedProperty(entity, nameof(EntityMetadata.PrimaryIdAttribute), attributes[entity.LogicalName].OfType<UniqueIdentifierAttributeMetadata>().First().LogicalName);
-                SetSealedProperty(entity, nameof(EntityMetadata.Attributes), attributes[entity.LogicalName]);
-            }
-        }
 
-        private static void SetRelationships(EntityMetadata[] entities, OneToManyRelationshipMetadata[] relationships)
-        {
-            foreach (var relationship in relationships)
-            {
-                relationship.ReferencingEntityNavigationPropertyName = relationship.ReferencingAttribute;
-                relationship.ReferencedEntityNavigationPropertyName = relationship.SchemaName;
-            }
 
-            foreach (var entity in entities)
-            {
-                var oneToMany = relationships.Where(r => r.ReferencedEntity == entity.LogicalName).ToArray();
-                var manyToOne = relationships.Where(r => r.ReferencingEntity == entity.LogicalName).ToArray();
 
-                SetSealedProperty(entity, nameof(EntityMetadata.OneToManyRelationships), oneToMany);
-                SetSealedProperty(entity, nameof(EntityMetadata.ManyToOneRelationships), manyToOne);
-            }
-        }
 
-        private static void SetSealedProperty(object target, string name, object value)
-        {
-            target.GetType().GetProperty(name)?.SetValue(target, value, null);
-        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }
