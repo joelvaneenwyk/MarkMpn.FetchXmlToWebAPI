@@ -21,6 +21,7 @@
         <IsPackable>false</IsPackable>
         <Title>$(AssemblyName)</Title>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+        <SignAssembly>False</SignAssembly>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -31,8 +32,8 @@
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
         <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="17.9.0" />
-        <PackageReference Include="MSTest" Version="3.2.2" />
-        <PackageReference Include="MSTest.TestFramework" Version="3.2.2" />
+        <PackageReference Include="MSTest" Version="3.3.1" />
+        <PackageReference Include="MSTest.TestFramework" Version="3.3.1" />
         <PackageReference Include="FakeXrmEasy.Plugins.v9" Version="3.4.1" />
         <PackageReference Include="FakeXrmEasy.Messages.v9" Version="3.4.0" />
         <PackageReference Include="coverlet.collector" Version="6.0.2">
