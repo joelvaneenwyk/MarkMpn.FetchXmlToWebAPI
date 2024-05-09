@@ -22,6 +22,7 @@
         <Title>$(AssemblyName)</Title>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
         <SignAssembly>False</SignAssembly>
+        <Configurations>Debug;Release</Configurations>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
