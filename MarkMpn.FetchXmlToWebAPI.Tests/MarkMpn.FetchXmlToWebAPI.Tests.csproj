@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <SelfContained>false</SelfContained>
         <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
@@ -23,6 +23,7 @@
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
         <SignAssembly>False</SignAssembly>
         <Configurations>Debug;Release</Configurations>
+        <GenerateDocumentationFile>True</GenerateDocumentationFile>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <TreatWarningsAsErrors>False</TreatWarningsAsErrors>

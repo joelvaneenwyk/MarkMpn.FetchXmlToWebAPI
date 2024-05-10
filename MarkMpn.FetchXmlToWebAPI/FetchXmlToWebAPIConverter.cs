@@ -151,6 +151,11 @@ namespace MarkMpn.FetchXmlToWebAPI
 
         private sealed class OrderOData
         {
+            public OrderOData(string propertyName = null)
+            {
+                PropertyName = propertyName ?? string.Empty;
+            }
+
             public string PropertyName { get; set; }
 
             public bool Descending { get; set; }
@@ -613,8 +618,11 @@ namespace MarkMpn.FetchXmlToWebAPI
                                 func = "startswith";
                             }
 
-                            result =
-                                $"{func}({HttpUtility.UrlEncode(navigationProperty + attrMeta.LogicalName)}, {FormatValue(typeof(string), value)})";
+                            if (value != null)
+                            {
+                                result =
+                                    $"{func}({HttpUtility.UrlEncode(navigationProperty + attrMeta.LogicalName)}, {FormatValue(typeof(string), value)})";
+                            }
                         }
 
                         if (condition.@operator == @operator.notlike)
