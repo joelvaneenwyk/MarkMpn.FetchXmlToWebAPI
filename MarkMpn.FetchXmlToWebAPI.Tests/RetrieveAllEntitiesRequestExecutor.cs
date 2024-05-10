@@ -5,31 +5,32 @@ using JetBrains.Annotations;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 
-namespace MarkMpn.FetchXmlToWebAPI.Tests;
-
-[UsedImplicitly]
-internal sealed class RetrieveAllEntitiesRequestExecutor : IFakeMessageExecutor
+namespace MarkMpn.FetchXmlToWebAPI.Tests
 {
-    private readonly FetchXmlConversionEntities _entities = new();
-    
-    public bool CanExecute(OrganizationRequest request)
+    [UsedImplicitly]
+    internal sealed class RetrieveAllEntitiesRequestExecutor : IFakeMessageExecutor
     {
-        return request is RetrieveAllEntitiesRequest;
-    }
+        private readonly FetchXmlConversionEntities _entities = new();
 
-    public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
-    {
-        return new RetrieveAllEntitiesResponse
+        public bool CanExecute(OrganizationRequest request)
         {
-            Results = new ParameterCollection
-            {
-                ["EntityMetadata"] = _entities.Entities
-    }
-        };
-    }
+            return request is RetrieveAllEntitiesRequest;
+        }
 
-    public Type GetResponsibleRequestType()
-    {
-        return typeof(RetrieveAllEntitiesRequest);
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
+        {
+            return new RetrieveAllEntitiesResponse
+            {
+                Results = new ParameterCollection
+                {
+                    ["EntityMetadata"] = _entities.Entities
+                }
+            };
+        }
+
+        public Type GetResponsibleRequestType()
+        {
+            return typeof(RetrieveAllEntitiesRequest);
+        }
     }
 }

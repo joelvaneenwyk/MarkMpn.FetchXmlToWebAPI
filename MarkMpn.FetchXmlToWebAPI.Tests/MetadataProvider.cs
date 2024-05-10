@@ -6,123 +6,54 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 
-namespace MarkMpn.FetchXmlToWebAPI.Tests;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-internal sealed class MetadataProvider : IMetadataProvider
+namespace MarkMpn.FetchXmlToWebAPI.Tests
 {
-    private readonly IOrganizationService? _organizationServices;
-
-    public MetadataProvider(IOrganizationService? organizationServices)
+    internal sealed class MetadataProvider : IMetadataProvider
     {
-        this._organizationServices = organizationServices;
-    }
+        private readonly IOrganizationService? _organizationServices;
 
-    public bool IsConnected => true;
+        public MetadataProvider(IOrganizationService? organizationServices)
+        {
+            this._organizationServices = organizationServices;
+        }
 
-    public EntityMetadata GetEntity(string? logicalName)
-    {
-        ArgumentNullException.ThrowIfNull(logicalName);
+        public bool IsConnected => true;
 
-        if (_organizationServices?.Execute(
-                new RetrieveEntityRequest
+        public EntityMetadata GetEntity(string? logicalName)
+        {
+            ArgumentNullException.ThrowIfNull(logicalName);
+
+            if (_organizationServices?.Execute(
+                    new RetrieveEntityRequest
+                    {
+                        LogicalName = logicalName,
+                        EntityFilters = EntityFilters.Entity |
+                                        EntityFilters.Attributes |
+                                        EntityFilters.Relationships
+                    }) is RetrieveEntityResponse response)
             {
-                LogicalName = logicalName,
-                EntityFilters = EntityFilters.Entity |
-                                EntityFilters.Attributes |
-                                EntityFilters.Relationships
-            }) is RetrieveEntityResponse response)
-        {
-            return response.EntityMetadata;
+                return response.EntityMetadata;
+            }
+
+            throw new InvalidPrimaryEntityNameException(logicalName);
         }
 
-        throw new InvalidPrimaryEntityNameException(logicalName);
-    }
-
-    public EntityMetadata GetEntity(int? otc)
-    {
-        ArgumentNullException.ThrowIfNull(otc);
-
-        if (_organizationServices?.Execute(
-                new RetrieveAllEntitiesRequest
-                {
-                    EntityFilters = EntityFilters.Entity |
-                                    EntityFilters.Attributes |
-                                    EntityFilters.Relationships
-                }) is RetrieveAllEntitiesResponse response)
+        public EntityMetadata GetEntity(int? otc)
         {
-            return response.EntityMetadata.First(e => e.ObjectTypeCode == otc);
-        }
+            ArgumentNullException.ThrowIfNull(otc);
 
-        throw new KeyNotFoundException();
+            if (_organizationServices?.Execute(
+                    new RetrieveAllEntitiesRequest
+                    {
+                        EntityFilters = EntityFilters.Entity |
+                                        EntityFilters.Attributes |
+                                        EntityFilters.Relationships
+                    }) is RetrieveAllEntitiesResponse response)
+            {
+                return response.EntityMetadata.First(e => e.ObjectTypeCode == otc);
+            }
+
+            throw new KeyNotFoundException();
+        }
     }
 }

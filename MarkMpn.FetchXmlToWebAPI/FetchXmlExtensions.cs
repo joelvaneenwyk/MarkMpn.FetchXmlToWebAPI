@@ -2,7 +2,7 @@
 
 namespace MarkMpn.FetchXmlToWebAPI
 {
-    partial class FetchType
+    public partial class FetchType
     {
 #pragma warning disable CA1051 // Do not declare visible instance fields
         [XmlAttribute]
