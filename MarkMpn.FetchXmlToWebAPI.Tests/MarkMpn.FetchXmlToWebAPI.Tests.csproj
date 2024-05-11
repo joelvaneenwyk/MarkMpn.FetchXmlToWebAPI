@@ -2,7 +2,7 @@
     <PropertyGroup>
         <SelfContained>false</SelfContained>
         <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
-        <RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
+        <RuntimeIdentifiers>win-x64;win-x86;linux-x64;linux-x86</RuntimeIdentifiers>
         <AssemblyName>MarkMpn.FetchXmlToWebAPI.Tests</AssemblyName>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
         <PackageTags>dataverse;linqpaddriver;commondataservice;powerapps;dynamics365</PackageTags>
@@ -24,6 +24,7 @@
         <SignAssembly>False</SignAssembly>
         <Configurations>Debug;Release</Configurations>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
