@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <SelfContained>false</SelfContained>
-        <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
-        <RuntimeIdentifiers>win-x64;win-x86;linux-x64;linux-x86</RuntimeIdentifiers>
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+        <RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
         <AssemblyName>MarkMpn.FetchXmlToWebAPI.Tests</AssemblyName>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
         <PackageTags>dataverse;linqpaddriver;commondataservice;powerapps;dynamics365</PackageTags>
