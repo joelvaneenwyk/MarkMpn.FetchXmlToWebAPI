@@ -15,9 +15,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
     {
         public class GenericResult
         {
-            public bool Succeeded { get; private set; }
-
-            [PublicAPI]
+            public bool Succeeded { get; private init; }
             public string? ErrorMessage { get; set; }
 
             public static GenericResult Succeed()
@@ -41,7 +39,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
                 {
                     ["firstname"] = firstName,
                     ["emailaddress1"] = email
-                }).ConfigureAwait(false);
+                });
 
                 return GenericResult.Succeed();
             }
@@ -65,10 +63,10 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         [TestMethod]
         public async Task ShouldCreateContact()
         {
-            var result = await CreateContactFn.CreateContact(Service, "Joe", "joe@satriani.com").ConfigureAwait(false);
+            GenericResult result = await CreateContactFn.CreateContact(Service, "Joe", "joe@satriani.com");
             Assert.IsTrue(result.Succeeded);
 
-            var contacts = Context.CreateQuery("contact").ToList();
+            System.Collections.Generic.List<Entity> contacts = Context.CreateQuery("contact").ToList();
             Assert.AreEqual(1, contacts.Count);
 
             Assert.AreEqual("Joe", contacts[0]["firstname"]);

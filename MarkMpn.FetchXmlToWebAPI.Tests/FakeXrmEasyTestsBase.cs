@@ -10,7 +10,6 @@ using FakeXrmEasy.FakeMessageExecutors;
 using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
-using JetBrains.Annotations;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Metadata;
 
@@ -19,7 +18,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
     [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     public class FakeXrmEasyTestsBase
     {
-        private readonly Lazy<FetchXmlConversionEntities> _entities = new Lazy<FetchXmlConversionEntities>(
+        private readonly Lazy<FetchXmlConversionEntities> _entities = new(
             () => new FetchXmlConversionEntities(), LazyThreadSafetyMode.ExecutionAndPublication);
 
         protected readonly IXrmFakedContext Context;
@@ -40,17 +39,17 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
             Service = Context.GetAsyncOrganizationService2();
         }
 
+#pragma warning disable IDE0022 // Use block body for method
         protected string? ConvertFetchToOData(string fetch) =>
             _entities.Value.Convert(fetch, Context);
+#pragma warning restore IDE0022 // Use block body for method
     }
 
 
     public sealed class FetchXmlConversionEntities
     {
-        private readonly List<OneToManyRelationshipMetadata> _relationships = new List<OneToManyRelationshipMetadata>();
-        private readonly List<EntityMetadata> _entities = new List<EntityMetadata>();
-
-        [UsedImplicitly]
+        private readonly List<OneToManyRelationshipMetadata> _relationships = new();
+        private readonly List<EntityMetadata> _entities = new();
         private readonly Dictionary<string, AttributeMetadata[]> _attributes;
 
 
@@ -220,7 +219,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
             SetRelationships(this._entities.ToArray(), this._relationships.ToArray());
             SetAttributes(this._entities.ToArray(), _attributes);
 
-            var incidentEntityMetadata = this._entities.First(e => e.LogicalName == "incident");
+            EntityMetadata incidentEntityMetadata = this._entities.First(e => e.LogicalName == "incident");
             SetSealedProperty(
                 incidentEntityMetadata,
                 nameof(EntityMetadata.ObjectTypeCode),
@@ -232,13 +231,13 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
             IXrmFakedContext context,
             string orgUrl = "https://example.crm.dynamics.com/api/data/v9.0")
         {
-            foreach (var entity in this._entities)
+            foreach (EntityMetadata entity in this._entities)
             {
                 context.SetEntityMetadata(entity);
             }
 
-            var org = context.GetOrganizationService();
-            var converter = new FetchXmlToWebAPIConverter(
+            Microsoft.Xrm.Sdk.IOrganizationService org = context.GetOrganizationService();
+            FetchXmlToWebAPIConverter converter = new(
                 new MetadataProvider(org),
                 orgUrl);
             return converter.ConvertFetchXmlToWebAPI(fetch);
@@ -246,7 +245,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
         private static void SetAttributes(EntityMetadata[] entities, Dictionary<string, AttributeMetadata[]> attributes)
         {
-            foreach (var entity in entities)
+            foreach (EntityMetadata entity in entities)
             {
                 SetSealedProperty(entity, nameof(EntityMetadata.PrimaryIdAttribute),
                     attributes[entity.LogicalName].OfType<UniqueIdentifierAttributeMetadata>().First().LogicalName);
@@ -256,16 +255,16 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
         private static void SetRelationships(EntityMetadata[] entities, OneToManyRelationshipMetadata[] relationships)
         {
-            foreach (var relationship in relationships)
+            foreach (OneToManyRelationshipMetadata relationship in relationships)
             {
                 relationship.ReferencingEntityNavigationPropertyName = relationship.ReferencingAttribute;
                 relationship.ReferencedEntityNavigationPropertyName = relationship.SchemaName;
             }
 
-            foreach (var entity in entities)
+            foreach (EntityMetadata entity in entities)
             {
-                var oneToMany = relationships.Where(r => r.ReferencedEntity == entity.LogicalName).ToArray();
-                var manyToOne = relationships.Where(r => r.ReferencingEntity == entity.LogicalName).ToArray();
+                OneToManyRelationshipMetadata[] oneToMany = relationships.Where(r => r.ReferencedEntity == entity.LogicalName).ToArray();
+                OneToManyRelationshipMetadata[] manyToOne = relationships.Where(r => r.ReferencingEntity == entity.LogicalName).ToArray();
 
                 SetSealedProperty(entity, nameof(EntityMetadata.OneToManyRelationships), oneToMany);
                 SetSealedProperty(entity, nameof(EntityMetadata.ManyToOneRelationships), manyToOne);
@@ -274,7 +273,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
         private static void SetSealedProperty(object? target, string name, object value)
         {
-            PropertyInfo? prop = target?.GetType().GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
+            PropertyInfo? prop = target?.GetType()?.GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
             if (prop != null && prop.CanWrite)
             {
                 prop.SetValue(target, value, null);

@@ -23,40 +23,31 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
         {
             ArgumentNullException.ThrowIfNull(logicalName);
 
-            if (_organizationServices?.Execute(
+            return _organizationServices?.Execute(
                     new RetrieveEntityRequest
                     {
                         LogicalName = logicalName,
                         EntityFilters = EntityFilters.Entity |
-                                        EntityFilters.Attributes |
-                                        EntityFilters.Relationships
-                    }) is RetrieveEntityResponse response)
-            {
-                return response.EntityMetadata;
-            }
-
-            throw new InvalidPrimaryEntityNameException(logicalName);
+                                    EntityFilters.Attributes |
+                                    EntityFilters.Relationships
+                    }) is RetrieveEntityResponse response
+                ? response.EntityMetadata
+                : throw new InvalidPrimaryEntityNameException(logicalName);
         }
 
         public EntityMetadata GetEntity(int? otc)
         {
-            if (!otc.HasValue)
-            {
-                throw new ArgumentNullException(nameof(otc));
-            }
-
-            if (_organizationServices?.Execute(
+            return !otc.HasValue
+                ? throw new ArgumentNullException(nameof(otc))
+                : _organizationServices?.Execute(
                     new RetrieveAllEntitiesRequest
                     {
                         EntityFilters = EntityFilters.Entity |
                                         EntityFilters.Attributes |
                                         EntityFilters.Relationships
-                    }) is RetrieveAllEntitiesResponse response)
-            {
-                return response.EntityMetadata.First(e => e.ObjectTypeCode == otc);
-            }
-
-            throw new KeyNotFoundException();
+                    }) is RetrieveAllEntitiesResponse response
+                ? response.EntityMetadata.First(e => e.ObjectTypeCode == otc)
+                : throw new KeyNotFoundException();
         }
     }
 }

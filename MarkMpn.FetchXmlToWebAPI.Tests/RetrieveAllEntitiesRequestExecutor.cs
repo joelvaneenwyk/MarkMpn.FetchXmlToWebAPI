@@ -10,7 +10,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
     [UsedImplicitly]
     internal sealed class RetrieveAllEntitiesRequestExecutor : IFakeMessageExecutor
     {
-        private readonly FetchXmlConversionEntities _entities = new FetchXmlConversionEntities();
+        private readonly FetchXmlConversionEntities _entities = new();
 
         public bool CanExecute(OrganizationRequest request)
         {
