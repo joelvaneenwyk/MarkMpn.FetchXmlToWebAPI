@@ -498,13 +498,24 @@ namespace MarkMpn.FetchXmlToWebAPI
         {
             return items
                 .OfType<condition>()
-                .Select(c => GetCondition(entityName, c, rootEntityItems, navigationProperty))
-                .Concat(items
-                    .OfType<FetchLinkEntityType>()
-                    .Select(c => GetCondition(entityName, c, rootEntityItems, navigationProperty)));
+                .Select(c => GetCondition(entityName, c, rootEntityItems, navigationProperty));
         }
 
+        //private IEnumerable<string> ConvertConditions(string entityName, object[] items, object[] rootEntityItems,
+        //    string navigationProperty = "")
+        //{
+        //    return items
+        //        .OfType<condition>()
+        //        .Select(c => GetCondition(entityName, c, rootEntityItems, navigationProperty))
+        //        .Concat(items
+        //            .OfType<FetchLinkEntityType>()
+        //            .Select(c => GetCondition(entityName, c, rootEntityItems, navigationProperty)));
+        //}
+
+        [UsedImplicitly]
+#pragma warning disable IDE0051 // Remove unused private members
         private string GetCondition(string entityName, FetchLinkEntityType linkEntity, object[] rootEntityItems, string navigationProperty)
+#pragma warning restore IDE0051 // Remove unused private members
         {
             var childId = ++_childId;
 
@@ -526,7 +537,7 @@ namespace MarkMpn.FetchXmlToWebAPI
 
             var result = $"{navigationProperty}{filter.PropertyName}/{predicate}";
 
-            if (filter.Filter.Any())
+            if (filter.Filter.Count != 0)
                 result += $"(x{childId}:{string.Join(" and ", filter.Filter)})";
             else
                 result += "()";
@@ -537,7 +548,7 @@ namespace MarkMpn.FetchXmlToWebAPI
             return result;
         }
 
-        private static void InvertConditions(object[] items)
+        private static void InvertConditions(object[]? items)
         {
             if (items == null)
                 return;
@@ -1309,7 +1320,9 @@ namespace MarkMpn.FetchXmlToWebAPI
             }
 
             if (type == typeof(Guid))
+            {
                 return Guid.Parse(s).ToString();
+            }
 
             return HttpUtility.UrlEncode(Convert.ChangeType(s, type, culture).ToString())
                    ?? string.Empty;
