@@ -487,7 +487,162 @@ namespace MarkMpn.FetchXmlToWebAPI
         {
             return items
                 .OfType<condition>()
-                .Select(c => GetCondition(entityName, c, rootEntityItems, navigationProperty));
+                .Select(c => GetCondition(entityName, c, rootEntityItems, navigationProperty))
+                .Concat(items
+                    .OfType<FetchLinkEntityType>()
+                    .Select(c => GetCondition(entityName, c, rootEntityItems, navigationProperty)));
+        }
+
+        private string GetCondition(string entityName, FetchLinkEntityType linkEntity, object[] rootEntityItems, string navigationProperty)
+        {
+            var childId = ++_childId;
+
+            var isNot = linkEntity.linktype.StartsWith("not ");
+            var predicate = linkEntity.linktype;
+            if (isNot)
+            {
+                predicate = predicate.Substring(4);
+                InvertConditions(linkEntity.Items);
+            }
+
+            var currentLinkEntity = linkEntity;
+            var filter = new LinkEntityOData();
+            filter.PropertyName = LinkItemToNavigationProperty(entityName, currentLinkEntity, out var child, out var manyToManyNextLink);
+            currentLinkEntity = manyToManyNextLink ?? currentLinkEntity;
+            filter.Filter.AddRange(ConvertFilters(currentLinkEntity.name, currentLinkEntity.Items, rootEntityItems, $"x{childId}/"));
+
+            var result = $"{navigationProperty}{filter.PropertyName}/{predicate}";
+
+            if (filter.Filter.Any())
+                result += $"(x{childId}:{String.Join(" and ", filter.Filter)})";
+            else
+                result += "()";
+
+            if (isNot)
+                result = "not " + result;
+
+            return result;
+        }
+
+        private void InvertConditions(object[] items)
+        {
+            if (items == null)
+                return;
+
+            foreach (var filter in items.OfType<filter>())
+            {
+                if (filter.type == filterType.and)
+                    filter.type = filterType.or;
+                else
+                    filter.type = filterType.and;
+
+                InvertConditions(filter.Items);
+            }
+
+            foreach (var condition in items.OfType<condition>())
+            {
+                switch (condition.@operator)
+                {
+                    case @operator.eq:
+                        condition.@operator = @operator.ne;
+                        break;
+
+                    case @operator.ne:
+                        condition.@operator = @operator.eq;
+                        break;
+
+                    case @operator.lt:
+                        condition.@operator = @operator.ge;
+                        break;
+
+                    case @operator.le:
+                        condition.@operator = @operator.gt;
+                        break;
+
+                    case @operator.gt:
+                        condition.@operator = @operator.le;
+                        break;
+
+                    case @operator.ge:
+                        condition.@operator = @operator.lt;
+                        break;
+
+                    case @operator.@null:
+                        condition.@operator = @operator.notnull;
+                        break;
+
+                    case @operator.notnull:
+                        condition.@operator = @operator.@null;
+                        break;
+
+                    case @operator.@in:
+                        condition.@operator = @operator.notin;
+                        break;
+
+                    case @operator.notin:
+                        condition.@operator = @operator.@in;
+                        break;
+
+                    case @operator.beginswith:
+                        condition.@operator = @operator.notbeginwith;
+                        break;
+
+                    case @operator.notbeginwith:
+                        condition.@operator = @operator.beginswith;
+                        break;
+
+                    case @operator.endswith:
+                        condition.@operator = @operator.notendwith;
+                        break;
+
+                    case @operator.notendwith:
+                        condition.@operator = @operator.endswith;
+                        break;
+
+                    case @operator.between:
+                        condition.@operator = @operator.notbetween;
+                        break;
+
+                    case @operator.notbetween:
+                        condition.@operator = @operator.between;
+                        break;
+
+                    case @operator.containvalues:
+                        condition.@operator = @operator.notcontainvalues;
+                        break;
+
+                    case @operator.notcontainvalues:
+                        condition.@operator = @operator.containvalues;
+                        break;
+
+                    case @operator.like:
+                        condition.@operator = @operator.notlike;
+                        break;
+
+                    case @operator.notlike:
+                        condition.@operator = @operator.like;
+                        break;
+
+                    case @operator.under:
+                        condition.@operator = @operator.notunder;
+                        break;
+
+                    case @operator.notunder:
+                        condition.@operator = @operator.under;
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Cannot invert operator {condition.@operator}");
+                }
+            }
+
+            foreach (var linkEntity in items.OfType<FetchLinkEntityType>())
+            {
+                if (linkEntity.linktype.StartsWith("not "))
+                    linkEntity.linktype = linkEntity.linktype.Substring(4);
+                else
+                    linkEntity.linktype = "not " + linkEntity.linktype;
+            }
         }
 
         //private IEnumerable<string> ConvertConditions(string entityName, object[] items, object[] rootEntityItems,
@@ -1269,12 +1424,13 @@ namespace MarkMpn.FetchXmlToWebAPI
                     : date.ToString("u").Replace(' ', 'T');
             }
 
-            return type == typeof(bool)
-                ? s == "1" ? "true" : "false"
-                : type == typeof(Guid)
-                ? $"'{Guid.Parse(s)}'"
-                : HttpUtility.UrlEncode(Convert.ChangeType(s, type, culture).ToString())
-                   ?? string.Empty;
+            if (type == typeof(bool))
+                return s == "1" ? "true" : "false";
+
+            if (type == typeof(Guid))
+                return Guid.Parse(s).ToString();
+
+            return HttpUtility.UrlEncode(Convert.ChangeType(s, type).ToString());
         }
 
         private IEnumerable<OrderOData> ConvertOrder(string entityName, object[] items)
