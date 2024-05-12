@@ -1,6 +1,7 @@
 # FetchXML to Web API Converter
 
 [![.NET](https://github.com/joelvaneenwyk/MarkMpn.FetchXmlToWebAPI/actions/workflows/build.yml/badge.svg)](https://github.com/joelvaneenwyk/MarkMpn.FetchXmlToWebAPI/actions/workflows/build.yml)
+[![CodeQL](https://github.com/joelvaneenwyk/MarkMpn.FetchXmlToWebAPI/actions/workflows/codeql.yml/badge.svg)](https://github.com/joelvaneenwyk/MarkMpn.FetchXmlToWebAPI/actions/workflows/codeql.yml)
 
 Convert FetchXML queries to Web API format. Requires a connection to a Dataverse instance to provide metadata for the conversion,
 and the base URL of the Web API service.
