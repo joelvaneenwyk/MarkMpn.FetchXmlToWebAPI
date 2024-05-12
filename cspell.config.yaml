@@ -1,0 +1,11 @@
+version: "0.2"
+ignorePaths: []
+dictionaryDefinitions:
+  - name: cspell-fetch-xml
+    path: ./.vscode/cspell-fetch-xml.txt
+    addWords: true
+dictionaries:
+  - cspell-fetch-xml
+words: []
+ignoreWords: []
+import: []

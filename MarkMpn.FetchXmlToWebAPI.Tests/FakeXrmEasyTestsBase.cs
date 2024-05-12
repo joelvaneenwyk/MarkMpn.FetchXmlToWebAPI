@@ -10,6 +10,7 @@ using FakeXrmEasy.FakeMessageExecutors;
 using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
+using JetBrains.Annotations;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Metadata;
 
@@ -18,7 +19,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
     [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     public class FakeXrmEasyTestsBase
     {
-        private readonly Lazy<FetchXmlConversionEntities> _entities = new(
+        private readonly Lazy<FetchXmlConversionEntities> _entities = new Lazy<FetchXmlConversionEntities>(
             () => new FetchXmlConversionEntities(), LazyThreadSafetyMode.ExecutionAndPublication);
 
         protected readonly IXrmFakedContext Context;
@@ -46,8 +47,10 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
     public sealed class FetchXmlConversionEntities
     {
-        private readonly List<OneToManyRelationshipMetadata> _relationships = new();
-        private readonly List<EntityMetadata> _entities = new();
+        private readonly List<OneToManyRelationshipMetadata> _relationships = new List<OneToManyRelationshipMetadata>();
+        private readonly List<EntityMetadata> _entities = new List<EntityMetadata>();
+
+        [UsedImplicitly]
         private readonly Dictionary<string, AttributeMetadata[]> _attributes;
 
 
@@ -271,7 +274,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
         private static void SetSealedProperty(object? target, string name, object value)
         {
-            PropertyInfo? prop = target?.GetType()?.GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
+            PropertyInfo? prop = target?.GetType().GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
             if (prop != null && prop.CanWrite)
             {
                 prop.SetValue(target, value, null);

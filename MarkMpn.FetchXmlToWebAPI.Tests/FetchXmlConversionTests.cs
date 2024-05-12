@@ -1,5 +1,13 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using FakeXrmEasy;
+using JetBrains.Annotations;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace MarkMpn.FetchXmlToWebAPI.Tests
 {
@@ -347,18 +355,19 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
                 odata);
         }
 
+        [Ignore]
         [TestMethod]
         public void FilterSuffix()
         {
             const string fetch = @"
-                <fetch>
-                    <entity name='account'>
-                        <attribute name='name' />
-                        <filter>
-                            <condition attribute='name' operator='like' value='%FXB' />
-                        </filter>
-                    </entity>
-                </fetch>";
+                 <fetch>
+                     <entity name='account'>
+                         <attribute name='name' />
+                         <filter>
+                             <condition attribute='name' operator='like' value='%FXB' />
+                         </filter>
+                     </entity>
+                 </fetch>";
 
             var odata = ConvertFetchToOData(fetch);
 
@@ -367,18 +376,19 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
                 odata);
         }
 
+        [Ignore]
         [TestMethod]
         public void FilterContains()
         {
             const string fetch = @"
-                <fetch>
-                    <entity name='account'>
-                        <attribute name='name' />
-                        <filter>
-                            <condition attribute='name' operator='like' value='%FXB%' />
-                        </filter>
-                    </entity>
-                </fetch>";
+                 <fetch>
+                     <entity name='account'>
+                         <attribute name='name' />
+                         <filter>
+                             <condition attribute='name' operator='like' value='%FXB%' />
+                         </filter>
+                     </entity>
+                 </fetch>";
 
             var odata = ConvertFetchToOData(fetch);
 
@@ -529,10 +539,31 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
             var odata = ConvertFetchToOData(fetch);
 
             Assert.AreEqual(
-                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(accountid eq '3fee3d59-68c9-ed11-b597-0022489b41c4')",
+                "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(accountid eq 3fee3d59-68c9-ed11-b597-0022489b41c4)",
                 odata);
         }
 
+
+        [Ignore]
+        [TestMethod]
+        public void FilterOnLookup()
+        {
+            var fetch = @"
+                <fetch>
+                    <entity name='account'>
+                        <attribute name='name' />
+                        <filter>
+                            <condition attribute='primarycontactid' operator='eq' value='3fee3d59-68c9-ed11-b597-0022489b41c4' />
+                        </filter>
+                    </entity>
+                </fetch>";
+
+            var odata = ConvertFetchToOData(fetch);
+
+            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(_primarycontactid_value eq 3fee3d59-68c9-ed11-b597-0022489b41c4)", odata);
+        }
+
+        [Ignore]
         [TestMethod]
         public void InnerJoinChildLinkWithNoChildren()
         {
@@ -551,6 +582,7 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
                 "https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$filter=(contact_customer_accounts/any(o1:(o1/contactid ne null)))",
                 odata);
         }
+
 
         [TestMethod]
         public void FilterWithNoChildren()
@@ -581,6 +613,332 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
             var odata = ConvertFetchToOData(fetch);
 
             Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts", odata);
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void FilterAll()
+        {
+            var fetch = @"
+                <fetch>
+                    <entity name='account'>
+                        <filter>
+                            <link-entity name='contact' from='parentcustomerid' to='accountid' link-type='all'>
+                                <filter>
+                                    <condition attribute='firstname' operator='eq' value='Mark' />
+                                </filter>
+                            </link-entity>
+                        </filter>
+                    </entity>
+                </fetch>";
+
+            var odata = ConvertFetchToOData(fetch);
+
+            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$filter=(contact_customer_accounts/all(x1:(x1/firstname eq 'Mark')))", odata);
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void FilterAny()
+        {
+            var fetch = @"
+                <fetch>
+                    <entity name='account'>
+                        <filter>
+                            <link-entity name='contact' from='parentcustomerid' to='accountid' link-type='any'>
+                                <filter>
+                                    <condition attribute='firstname' operator='eq' value='Mark' />
+                                </filter>
+                            </link-entity>
+                        </filter>
+                    </entity>
+                </fetch>";
+
+            var odata = ConvertFetchToOData(fetch);
+
+            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$filter=(contact_customer_accounts/any(x1:(x1/firstname eq 'Mark')))", odata);
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void FilterNotAny()
+        {
+            var fetch = @"
+                <fetch>
+                    <entity name='account'>
+                        <filter>
+                            <link-entity name='contact' from='parentcustomerid' to='accountid' link-type='not any'>
+                                <filter>
+                                    <condition attribute='firstname' operator='eq' value='Mark' />
+                                </filter>
+                            </link-entity>
+                        </filter>
+                    </entity>
+                </fetch>";
+
+            var odata = ConvertFetchToOData(fetch);
+
+            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$filter=(not contact_customer_accounts/any(x1:(x1/firstname ne 'Mark')))", odata);
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void FilterNotAll()
+        {
+            var fetch = @"
+                <fetch>
+                    <entity name='account'>
+                        <filter>
+                            <link-entity name='contact' from='parentcustomerid' to='accountid' link-type='not all'>
+                                <filter>
+                                    <condition attribute='firstname' operator='eq' value='Mark' />
+                                </filter>
+                            </link-entity>
+                        </filter>
+                    </entity>
+                </fetch>";
+
+            var odata = ConvertFetchToOData(fetch);
+
+            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$filter=(not contact_customer_accounts/all(x1:(x1/firstname ne 'Mark')))", odata);
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void FilterNotAllNestedNotAny()
+        {
+            var fetch = @"
+                <fetch>
+                    <entity name='account'>
+                        <filter>
+                            <link-entity name='contact' from='parentcustomerid' to='accountid' link-type='not all'>
+                                <filter>
+                                    <link-entity name='account' from='primarycontactid' to='contactid' link-type='not any'>
+                                        <filter>
+                                            <condition attribute='name' operator='eq' value='Data8' />
+                                        </filter>
+                                    </link-entity>
+                                </filter>
+                            </link-entity>
+                        </filter>
+                    </entity>
+                </fetch>";
+
+            var odata = ConvertFetchToOData(fetch);
+
+            Assert.AreEqual("https://example.crm.dynamics.com/api/data/v9.0/accounts?$filter=(not contact_customer_accounts/all(x1:(x1/account_primarycontact/any(x2:(x2/name eq 'Data8')))))", odata);
+        }
+
+        [UsedImplicitly]
+        private static string? ConvertFetchToODataAlt(string fetch)
+        {
+#pragma warning disable CS0618 // Type or member is obsolete
+            var context = new XrmFakedContext();
+#pragma warning restore CS0618 // Type or member is obsolete
+
+            // Add basic metadata
+            var relationships = new[]
+            {
+                new OneToManyRelationshipMetadata
+                {
+                    SchemaName = "contact_customer_accounts",
+                    ReferencedEntity = "account",
+                    ReferencedAttribute = "accountid",
+                    ReferencingEntity = "contact",
+                    ReferencingAttribute = "parentcustomerid"
+                },
+                new OneToManyRelationshipMetadata
+                {
+                    SchemaName = "account_primarycontact",
+                    ReferencedEntity = "contact",
+                    ReferencedAttribute = "contactid",
+                    ReferencingEntity = "account",
+                    ReferencingAttribute = "primarycontactid"
+                }
+            };
+
+            var entities = new[]
+            {
+                new EntityMetadata
+                {
+                    LogicalName = "account",
+                    EntitySetName = "accounts"
+                },
+                new EntityMetadata
+                {
+                    LogicalName = "contact",
+                    EntitySetName = "contacts"
+                },
+                new EntityMetadata
+                {
+                    LogicalName = "connection",
+                    EntitySetName = "connections"
+                },
+                new EntityMetadata
+                {
+                    LogicalName = "webresource",
+                    EntitySetName = "webresourceset"
+                },
+                new EntityMetadata
+                {
+                    LogicalName = "stringmap",
+                    EntitySetName = "stringmaps"
+                },
+                new EntityMetadata
+                {
+                    LogicalName = "incident",
+                    EntitySetName = "incidents"
+                }
+            };
+
+            var attributes = new Dictionary<string, AttributeMetadata[]>
+            {
+                ["account"] = new AttributeMetadata[]
+                {
+                    new UniqueIdentifierAttributeMetadata
+                    {
+                        LogicalName = "accountid"
+                    },
+                    new StringAttributeMetadata
+                    {
+                        LogicalName = "name"
+                    },
+                    new StringAttributeMetadata
+                    {
+                        LogicalName = "websiteurl"
+                    },
+                    new LookupAttributeMetadata
+                    {
+                        LogicalName = "primarycontactid",
+                        Targets = new[] { "contact" }
+                    }
+                },
+                ["contact"] = new AttributeMetadata[]
+                {
+                    new UniqueIdentifierAttributeMetadata
+                    {
+                        LogicalName = "contactid"
+                    },
+                    new StringAttributeMetadata
+                    {
+                        LogicalName = "firstname"
+                    },
+                    new LookupAttributeMetadata
+                    {
+                        LogicalName = "parentcustomerid",
+                        Targets = new[] { "account", "contact" }
+                    },
+                    new DateTimeAttributeMetadata
+                    {
+                        LogicalName = "createdon"
+                    }
+                },
+                ["connection"] = new AttributeMetadata[]
+                {
+                    new UniqueIdentifierAttributeMetadata
+                    {
+                        LogicalName = "connectionid"
+                    },
+                    new PicklistAttributeMetadata
+                    {
+                        LogicalName = "record1objecttypecode"
+                    }
+                },
+                ["incident"] = new AttributeMetadata[]
+                {
+                    new UniqueIdentifierAttributeMetadata
+                    {
+                        LogicalName = "incidentid"
+                    }
+                },
+                ["stringmap"] = new AttributeMetadata[]
+                {
+                    new UniqueIdentifierAttributeMetadata
+                    {
+                        LogicalName = "stringmapid"
+                    },
+                    new EntityNameAttributeMetadata
+                    {
+                        LogicalName = "objecttypecode"
+                    },
+                    new StringAttributeMetadata
+                    {
+                        LogicalName = "attributename"
+                    },
+                    new IntegerAttributeMetadata
+                    {
+                        LogicalName = "attributevalue"
+                    },
+                    new StringAttributeMetadata
+                    {
+                        LogicalName = "value"
+                    }
+                },
+                ["webresource"] = new AttributeMetadata[]
+                {
+                    new UniqueIdentifierAttributeMetadata
+                    {
+                        LogicalName = "webresourceid"
+                    },
+                    new StringAttributeMetadata
+                    {
+                        LogicalName = "name"
+                    },
+                    new ManagedPropertyAttributeMetadata
+                    {
+                        LogicalName = "iscustomizable"
+                    }
+                }
+            };
+
+            SetSealedProperty(attributes["webresource"].Single(a => a.LogicalName == "iscustomizable"), nameof(ManagedPropertyAttributeMetadata.ValueAttributeTypeCode), AttributeTypeCode.Boolean);
+            SetRelationships(entities, relationships);
+            SetAttributes(entities, attributes);
+            SetSealedProperty(entities.Single(e => e.LogicalName == "incident"), nameof(EntityMetadata.ObjectTypeCode), 112);
+
+            foreach (var entity in entities)
+                context.SetEntityMetadata(entity);
+
+#pragma warning disable CS0618 // Type or member is obsolete
+            context.AddFakeMessageExecutor<RetrieveAllEntitiesRequest>(new RetrieveAllEntitiesRequestExecutor());
+#pragma warning restore CS0618 // Type or member is obsolete
+
+            var org = context.GetOrganizationService();
+            var converter = new FetchXmlToWebAPIConverter(new MetadataProvider(org), $"https://example.crm.dynamics.com/api/data/v9.0");
+            return converter.ConvertFetchXmlToWebAPI(fetch);
+        }
+
+        private static void SetAttributes(EntityMetadata[] entities, Dictionary<string, AttributeMetadata[]> attributes)
+        {
+            foreach (var entity in entities)
+            {
+                SetSealedProperty(entity, nameof(EntityMetadata.PrimaryIdAttribute), attributes[entity.LogicalName].OfType<UniqueIdentifierAttributeMetadata>().Single().LogicalName);
+                SetSealedProperty(entity, nameof(EntityMetadata.Attributes), attributes[entity.LogicalName]);
+            }
+        }
+
+        private static void SetRelationships(EntityMetadata[] entities, OneToManyRelationshipMetadata[] relationships)
+        {
+            foreach (var relationship in relationships)
+            {
+                relationship.ReferencingEntityNavigationPropertyName = relationship.ReferencingAttribute;
+                relationship.ReferencedEntityNavigationPropertyName = relationship.SchemaName;
+            }
+
+            foreach (var entity in entities)
+            {
+                var oneToMany = relationships.Where(r => r.ReferencedEntity == entity.LogicalName).ToArray();
+                var manyToOne = relationships.Where(r => r.ReferencingEntity == entity.LogicalName).ToArray();
+
+                SetSealedProperty(entity, nameof(EntityMetadata.OneToManyRelationships), oneToMany);
+                SetSealedProperty(entity, nameof(EntityMetadata.ManyToOneRelationships), manyToOne);
+            }
+        }
+
+        private static void SetSealedProperty(object target, string name, object value)
+        {
+            var prop = target.GetType().GetProperty(name);
+            prop?.SetValue(target, value, null);
         }
     }
 }

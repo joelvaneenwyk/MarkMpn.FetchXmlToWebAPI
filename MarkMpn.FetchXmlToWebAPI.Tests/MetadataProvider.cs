@@ -40,7 +40,10 @@ namespace MarkMpn.FetchXmlToWebAPI.Tests
 
         public EntityMetadata GetEntity(int? otc)
         {
-            ArgumentNullException.ThrowIfNull(otc);
+            if (!otc.HasValue)
+            {
+                throw new ArgumentNullException(nameof(otc));
+            }
 
             if (_organizationServices?.Execute(
                     new RetrieveAllEntitiesRequest
