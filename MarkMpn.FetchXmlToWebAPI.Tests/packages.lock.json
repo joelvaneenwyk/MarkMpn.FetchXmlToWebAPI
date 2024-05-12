@@ -62,6 +62,22 @@
           "Microsoft.NET.Test.Sdk": "17.9.0"
         }
       },
+      "MSTest.Analyzers": {
+        "type": "Direct",
+        "requested": "[3.3.1, )",
+        "resolved": "3.3.1",
+        "contentHash": "rfgCjzDW94+nq6/qt/UV/FdEur6352rBLghPNMPF7rasLWeeWZNpn8pWggTJkPUPdChGMf1jFWSBQfstaP3jwg=="
+      },
+      "MSTest.TestAdapter": {
+        "type": "Direct",
+        "requested": "[3.3.1, )",
+        "resolved": "3.3.1",
+        "contentHash": "ddSsUEQKibWamkosqbQmuhb1DpToI2LJb01yEPDA4MIhXJah4oBOARlLLI7bjWSkkRLDz/iPlx2Uac9qgmHlHg==",
+        "dependencies": {
+          "Microsoft.Testing.Extensions.VSTestBridge": "1.1.0",
+          "Microsoft.Testing.Platform.MSBuild": "1.1.0"
+        }
+      },
       "MSTest.TestFramework": {
         "type": "Direct",
         "requested": "[3.3.1, )",
@@ -386,20 +402,6 @@
         "contentHash": "Bh6blKG8VAKvXiLe2L+sEsn62nc1Ij34MrNxepD2OCrS5cpCwQa9MeLyhVQPQ/R4Wlzwuy6wMK8hLb11QPDRsQ==",
         "dependencies": {
           "Microsoft.NETCore.Platforms": "5.0.0"
-        }
-      },
-      "MSTest.Analyzers": {
-        "type": "Transitive",
-        "resolved": "3.3.1",
-        "contentHash": "rfgCjzDW94+nq6/qt/UV/FdEur6352rBLghPNMPF7rasLWeeWZNpn8pWggTJkPUPdChGMf1jFWSBQfstaP3jwg=="
-      },
-      "MSTest.TestAdapter": {
-        "type": "Transitive",
-        "resolved": "3.3.1",
-        "contentHash": "ddSsUEQKibWamkosqbQmuhb1DpToI2LJb01yEPDA4MIhXJah4oBOARlLLI7bjWSkkRLDz/iPlx2Uac9qgmHlHg==",
-        "dependencies": {
-          "Microsoft.Testing.Extensions.VSTestBridge": "1.1.0",
-          "Microsoft.Testing.Platform.MSBuild": "1.1.0"
         }
       },
       "NETStandard.Library": {
@@ -5235,6 +5237,22 @@
           "Microsoft.NET.Test.Sdk": "17.9.0"
         }
       },
+      "MSTest.Analyzers": {
+        "type": "Direct",
+        "requested": "[3.3.1, )",
+        "resolved": "3.3.1",
+        "contentHash": "rfgCjzDW94+nq6/qt/UV/FdEur6352rBLghPNMPF7rasLWeeWZNpn8pWggTJkPUPdChGMf1jFWSBQfstaP3jwg=="
+      },
+      "MSTest.TestAdapter": {
+        "type": "Direct",
+        "requested": "[3.3.1, )",
+        "resolved": "3.3.1",
+        "contentHash": "ddSsUEQKibWamkosqbQmuhb1DpToI2LJb01yEPDA4MIhXJah4oBOARlLLI7bjWSkkRLDz/iPlx2Uac9qgmHlHg==",
+        "dependencies": {
+          "Microsoft.Testing.Extensions.VSTestBridge": "1.1.0",
+          "Microsoft.Testing.Platform.MSBuild": "1.1.0"
+        }
+      },
       "MSTest.TestFramework": {
         "type": "Direct",
         "requested": "[3.3.1, )",
@@ -5559,20 +5577,6 @@
         "contentHash": "Bh6blKG8VAKvXiLe2L+sEsn62nc1Ij34MrNxepD2OCrS5cpCwQa9MeLyhVQPQ/R4Wlzwuy6wMK8hLb11QPDRsQ==",
         "dependencies": {
           "Microsoft.NETCore.Platforms": "5.0.0"
-        }
-      },
-      "MSTest.Analyzers": {
-        "type": "Transitive",
-        "resolved": "3.3.1",
-        "contentHash": "rfgCjzDW94+nq6/qt/UV/FdEur6352rBLghPNMPF7rasLWeeWZNpn8pWggTJkPUPdChGMf1jFWSBQfstaP3jwg=="
-      },
-      "MSTest.TestAdapter": {
-        "type": "Transitive",
-        "resolved": "3.3.1",
-        "contentHash": "ddSsUEQKibWamkosqbQmuhb1DpToI2LJb01yEPDA4MIhXJah4oBOARlLLI7bjWSkkRLDz/iPlx2Uac9qgmHlHg==",
-        "dependencies": {
-          "Microsoft.Testing.Extensions.VSTestBridge": "1.1.0",
-          "Microsoft.Testing.Platform.MSBuild": "1.1.0"
         }
       },
       "NETStandard.Library": {
@@ -10408,6 +10412,22 @@
           "Microsoft.NET.Test.Sdk": "17.9.0"
         }
       },
+      "MSTest.Analyzers": {
+        "type": "Direct",
+        "requested": "[3.3.1, )",
+        "resolved": "3.3.1",
+        "contentHash": "rfgCjzDW94+nq6/qt/UV/FdEur6352rBLghPNMPF7rasLWeeWZNpn8pWggTJkPUPdChGMf1jFWSBQfstaP3jwg=="
+      },
+      "MSTest.TestAdapter": {
+        "type": "Direct",
+        "requested": "[3.3.1, )",
+        "resolved": "3.3.1",
+        "contentHash": "ddSsUEQKibWamkosqbQmuhb1DpToI2LJb01yEPDA4MIhXJah4oBOARlLLI7bjWSkkRLDz/iPlx2Uac9qgmHlHg==",
+        "dependencies": {
+          "Microsoft.Testing.Extensions.VSTestBridge": "1.1.0",
+          "Microsoft.Testing.Platform.MSBuild": "1.1.0"
+        }
+      },
       "MSTest.TestFramework": {
         "type": "Direct",
         "requested": "[3.3.1, )",
@@ -10732,20 +10752,6 @@
         "contentHash": "Bh6blKG8VAKvXiLe2L+sEsn62nc1Ij34MrNxepD2OCrS5cpCwQa9MeLyhVQPQ/R4Wlzwuy6wMK8hLb11QPDRsQ==",
         "dependencies": {
           "Microsoft.NETCore.Platforms": "5.0.0"
-        }
-      },
-      "MSTest.Analyzers": {
-        "type": "Transitive",
-        "resolved": "3.3.1",
-        "contentHash": "rfgCjzDW94+nq6/qt/UV/FdEur6352rBLghPNMPF7rasLWeeWZNpn8pWggTJkPUPdChGMf1jFWSBQfstaP3jwg=="
-      },
-      "MSTest.TestAdapter": {
-        "type": "Transitive",
-        "resolved": "3.3.1",
-        "contentHash": "ddSsUEQKibWamkosqbQmuhb1DpToI2LJb01yEPDA4MIhXJah4oBOARlLLI7bjWSkkRLDz/iPlx2Uac9qgmHlHg==",
-        "dependencies": {
-          "Microsoft.Testing.Extensions.VSTestBridge": "1.1.0",
-          "Microsoft.Testing.Platform.MSBuild": "1.1.0"
         }
       },
       "NETStandard.Library": {

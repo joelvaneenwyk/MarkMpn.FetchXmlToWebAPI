@@ -2,14 +2,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MarkMpn.FetchXmlToWebAPI", "MarkMpn.FetchXmlToWebAPI/MarkMpn.FetchXmlToWebAPI.shproj", "{543E6D79-2913-4B00-AAAC-5661F6ADB1A5}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MarkMpn.FetchXmlToWebAPI", "MarkMpn.FetchXmlToWebAPI\MarkMpn.FetchXmlToWebAPI.shproj", "{543E6D79-2913-4B00-AAAC-5661F6ADB1A5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarkMpn.FetchXmlToWebAPI.Tests", "MarkMpn.FetchXmlToWebAPI.Tests/MarkMpn.FetchXmlToWebAPI.Tests.csproj", "{E463D224-EB4F-4808-BFA1-66ABFBFCFFDD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarkMpn.FetchXmlToWebAPI.Tests", "MarkMpn.FetchXmlToWebAPI.Tests\MarkMpn.FetchXmlToWebAPI.Tests.csproj", "{E463D224-EB4F-4808-BFA1-66ABFBFCFFDD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Global", "Global", "{DA7FFA54-A700-45DC-A3D8-F2820C69D03D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "{root}", "{root}", "{DA7FFA54-A700-45DC-A3D8-F2820C69D03D}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		cspell.config.yaml = cspell.config.yaml
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -17,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{415A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{186925FF-6AA4-4091-9641-7DB074819737}"
 	ProjectSection(SolutionItems) = preProject
-		.github/workflows/build.yml = .github/workflows/build.yml
+		.github\workflows\build.yml = .github\workflows\build.yml
 	EndProjectSection
 EndProject
 Global
@@ -42,7 +44,7 @@ Global
 		SolutionGuid = {A2D85DB1-6AB6-4185-AF31-8E437B8F2838}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		MarkMpn.FetchXmlToWebAPI/MarkMpn.FetchXmlToWebAPI.projitems*{543e6d79-2913-4b00-aaac-5661f6adb1a5}*SharedItemsImports = 13
-		MarkMpn.FetchXmlToWebAPI/MarkMpn.FetchXmlToWebAPI.projitems*{e463d224-eb4f-4808-bfa1-66abfbfcffdd}*SharedItemsImports = 5
+		MarkMpn.FetchXmlToWebAPI\MarkMpn.FetchXmlToWebAPI.projitems*{543e6d79-2913-4b00-aaac-5661f6adb1a5}*SharedItemsImports = 13
+		MarkMpn.FetchXmlToWebAPI\MarkMpn.FetchXmlToWebAPI.projitems*{e463d224-eb4f-4808-bfa1-66abfbfcffdd}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal
