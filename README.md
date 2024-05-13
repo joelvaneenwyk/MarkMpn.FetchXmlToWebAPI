@@ -3,7 +3,10 @@
 [![.NET](https://github.com/joelvaneenwyk/MarkMpn.FetchXmlToWebAPI/actions/workflows/build.yml/badge.svg)](https://github.com/joelvaneenwyk/MarkMpn.FetchXmlToWebAPI/actions/workflows/build.yml)
 [![CodeQL](https://github.com/joelvaneenwyk/MarkMpn.FetchXmlToWebAPI/actions/workflows/codeql.yml/badge.svg)](https://github.com/joelvaneenwyk/MarkMpn.FetchXmlToWebAPI/actions/workflows/codeql.yml)
 
-Convert FetchXML queries to Web API format. Requires a connection to a Dataverse instance to provide metadata for the conversion,
+> [!WARNING]
+> This is a **fork** of [MarkMpn/MarkMpn.FetchXmlToWebAPI: Convert FetchXML queries to Web API format](https://github.com/MarkMpn/MarkMpn.FetchXmlToWebAPI) created by [Mark Carrington (`MarkMpn`)](https://github.com/MarkMpn). This **fork** contains only minor changes/tweaks and adds GitHub build action to ensure changes are at least somewhat resilient.
+
+Convert [FetchXml](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/fetchxml/overview) queries to [OData Web API](https://github.com/OData/WebApi) format. Requires a connection to a [Dataverse](https://www.microsoft.com/en-us/power-platform/dataverse) instance to provide metadata for the conversion,
 and the base URL of the Web API service.
 
 ```csharp
@@ -21,9 +24,14 @@ var query = @"
         </entity>
     </fetch>
 ";
-var converted = converter.ConvertFetchXmlToWebAPI(query);
+string converted = converter.ConvertFetchXmlToWebAPI(query);
+```
 
-// https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname;$filter=(startswith(firstname, 'FXB')))&$filter=(contact_customer_accounts/any(o1:(startswith(o1%2ffirstname, 'FXB'))))
+After a successful run, `converted` should equal:
+
+```html
+https://example.crm.dynamics.com/api/data/v9.0/accounts?$select=name&$expand=contact_customer_accounts($select=firstname;$filter=(startswith(firstname,
+'FXB')))&$filter=(contact_customer_accounts/any(o1:(startswith(o1%2ffirstname, 'FXB'))))
 ```
 
 Not all FetchXML queries can be converted to Web API due to differences in the query structure. If the query cannot be converted

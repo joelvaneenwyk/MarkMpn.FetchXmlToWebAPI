@@ -64,8 +64,8 @@ jobs:
 
       - uses: bibipkins/dotnet-test-reporter@v1.4.0
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ github.token }}
           comment-title: 'Unit Test Results'
-          results-path: ./TestResults/*.trx
-          #coverage-path: ./TestResults/coverage.xml
-          #coverage-threshold: 80
+          results-path: ./TestResults/**/*.trx
+          coverage-path: ./TestResults/**/coverage.cobertura.xml
+          coverage-threshold: 80

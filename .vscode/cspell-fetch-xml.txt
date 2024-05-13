@@ -1,12 +1,14 @@
 #
 # MarkMpn.FetchXmlToWebAPI | CSpell Dictionary
-#
 accountid
 activityid
 addedby
 aiconfiguration
+bibipkins
 Childrens
 childrensnames
+cobertura
+codeql
 connectionid
 contactid
 Copresence
