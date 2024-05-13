@@ -1,3 +1,20 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# We expect this repository to be included as a submodule so it
+# is not the root.
+root = false
+
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = crlf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+single_quote = single
+
+[*.{yml,yaml}]
+indent_size = 2
 
 [*.{appxmanifest,axml,build,c,c++,c++m,cc,ccm,cginc,compute,config,cp,cpp,cppm,csproj,cu,cuh,cxx,cxxm,dbml,discomap,dtd,fx,fxh,h,hh,hlsl,hlsli,hlslinc,hpp,hxx,inc,inl,ino,ipp,ixx,jsproj,lsproj,mpp,mq4,mq5,mqh,mxx,njsproj,nuspec,proj,props,resw,resx,StyleCop,targets,tasks,tpp,usf,ush,vbproj,xml,xsd}]
 indent_style = tab
@@ -35,7 +52,7 @@ dotnet_naming_rule.property_rule.symbols = property_symbols
 dotnet_naming_style.lower_camel_case_style.capitalization = camel_case
 dotnet_naming_style.upper_camel_case_style.capitalization = pascal_case
 dotnet_naming_symbols.enum_member_symbols.applicable_accessibilities = *
-dotnet_naming_symbols.enum_member_symbols.applicable_kinds = 
+dotnet_naming_symbols.enum_member_symbols.applicable_kinds =
 dotnet_naming_symbols.enum_member_symbols.resharper_applicable_kinds = enum_member
 dotnet_naming_symbols.enum_member_symbols.resharper_required_modifiers = any
 dotnet_naming_symbols.property_symbols.applicable_accessibilities = *
