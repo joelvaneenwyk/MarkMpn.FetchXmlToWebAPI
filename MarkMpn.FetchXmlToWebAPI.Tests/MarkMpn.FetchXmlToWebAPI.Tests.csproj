@@ -52,9 +52,12 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Remove="obj/**" />
+        <Compile Remove="TestResults\**" />
         <EmbeddedResource Remove="obj/**" />
+        <EmbeddedResource Remove="TestResults\**" />
         <Page Remove="obj/**" />
         <None Remove="obj/**" />
+        <None Remove="TestResults\**" />
     </ItemGroup>
     <Import Project="../MarkMpn.FetchXmlToWebAPI/MarkMpn.FetchXmlToWebAPI.projitems" Label="Shared" />
 </Project>
