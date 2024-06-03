@@ -9,6 +9,8 @@ using System.Xml.Serialization;
 using JetBrains.Annotations;
 using Microsoft.Xrm.Sdk.Metadata;
 
+#nullable enable
+
 namespace MarkMpn.FetchXmlToWebAPI
 {
     /// <summary>
